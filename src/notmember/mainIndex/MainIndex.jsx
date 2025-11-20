@@ -8,6 +8,7 @@ import ChartIndex from "../../member/chartIndex/ChartIndex";
 import DiaryIndex from "../../member/diaryIndex/DiaryIndex";
 import BoardIndex from "../boardIndex/BoardIndex";
 import ParentInfoIndex from "../../member/parentInfoIndex/ParentInfoIndex";
+import InputBaby from "../../member/inputBaby/InputBaby";
 import styles from "./MainIndex.module.css";
 
 //메인 인덱스 페이지
@@ -15,12 +16,11 @@ import styles from "./MainIndex.module.css";
 // "/"밑으로 들어가느 라우팅
 const MainIndex = ({ isLogin }) => {
 
-  
   return (
     <div className={styles.container}>
       {" "}
       {/*컨테이너 영역*/}
-      {/*헤더 영역 :git 필요시 로그인 여부 데이터 넘겨서 display none 사용하세요*/}
+      {/*헤더 영역 : 필요시 로그인 여부 데이터 넘겨서 display none 사용하세요*/}
       <header className={styles.MemberHeader}>
         <CommonHeader isLogin={isLogin} />
       </header>
