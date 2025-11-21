@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import BabyBox from "./babyBox/BabyBox";
 import BabyArticle from "./babyArticle/BabyArticle";
@@ -20,8 +21,8 @@ const BabyIndex = () => {
           <BabyButton onEmergencyClick={() => setShowCounseling(true)} />
         </div>
       </div>
-
       {/* 오른쪽 섹션 */}
+
       <div className={styles.rightSection}>
         <BabyArticle />
       </div>

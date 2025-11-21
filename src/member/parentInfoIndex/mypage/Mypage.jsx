@@ -1,8 +1,10 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
-
+import useMypage from "./useMypage";
 const Mypage = () => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // 수정 상태변수
+
+  const {data} =useMypage();
 
   return (
     <div className={styles.container}>
@@ -33,6 +35,7 @@ const Mypage = () => {
                     중복확인
                   </button>
                 </div>
+
               ) : (
                 <div className={styles.dbValue}>맘마미아</div>
               )}
@@ -63,6 +66,7 @@ const Mypage = () => {
                     className={styles.verificationInput}
                   />
                 </>
+
               ) : (
                 <div className={styles.dbValue}>mosque@gmail.com</div>
               )}
