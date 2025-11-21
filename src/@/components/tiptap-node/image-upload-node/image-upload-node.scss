@@ -187,10 +187,8 @@
     }
 
     .tiptap-image-upload-file-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      height: 2rem;
+      height: auto;     // ✅ 혹은 아예 삭제
+      align-items: flex-start;
 
       .tiptap-image-upload-file-icon {
         padding: 0.5rem;
@@ -246,4 +244,11 @@
       padding: 0.75rem;
     }
   }
+}
+
+
+.tiptap.ProseMirror > img:not([data-type=emoji] img) {
+    max-width: 20% !important;
+    outline: 0.125rem solid transparent;
+    border-radius: var(--tt-radius-xs, 0.25rem);
 }

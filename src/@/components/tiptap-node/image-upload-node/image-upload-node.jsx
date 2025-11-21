@@ -5,6 +5,7 @@ import { Button } from "@/components/tiptap-ui-primitive/button"
 import { CloseIcon } from "@/components/tiptap-icons/close-icon"
 import "@/components/tiptap-node/image-upload-node/image-upload-node.scss"
 import { focusNextNode, isValidPosition } from "@/lib/tiptap-utils"
+import { caxios } from "config/config";
 
 /**
  * Custom hook for managing multiple file uploads with progress tracking and cancellation
@@ -12,62 +13,145 @@ import { focusNextNode, isValidPosition } from "@/lib/tiptap-utils"
 function useFileUpload(options) {
   const [fileItems, setFileItems] = useState([])
 
+
+
   const uploadFile = async file => {
     if (file.size > options.maxSize) {
-      const error = new Error(`File size exceeds maximum allowed (${options.maxSize / 1024 / 1024}MB)`)
+      const error = new Error(
+        `File size exceeds maximum allowed (${options.maxSize / 1024 / 1024}MB)`
+      )
       options.onError?.(error)
       return null
     }
 
     const abortController = new AbortController()
-    const fileId = crypto.randomUUID()
+    const fileId = Date.now() + Math.random()
 
     const newFileItem = {
       id: fileId,
       file,
+      previewUrl: null,
       progress: 0,
       status: "uploading",
       abortController,
     }
 
-    setFileItems((prev) => [...prev, newFileItem])
+    setFileItems(prev => [...prev, newFileItem])
 
     try {
-      if (!options.upload) {
-        throw new Error("Upload function is not defined")
-      }
+      // ✅ 여기서 GCS 업로드 + URL 받기
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("target_type", "board")
 
-      const url = await options.upload(file, (event) => {
-        setFileItems((prev) =>
-          prev.map((item) =>
-            item.id === fileId ? { ...item, progress: event.progress } : item))
-      }, abortController.signal)
+      const resp = await caxios.post("/file/tempupload", formData, {
+        signal: abortController.signal,
+        onUploadProgress: (e) => {
+          const percent = Math.round((e.loaded * 100) / e.total)
+          setFileItems(prev =>
+            prev.map(item =>
+              item.id === fileId ? { ...item, progress: percent } : item
+            )
+          )
+        }
+      })
+
+      const url = resp.data.url
 
       if (!url) throw new Error("Upload failed: No URL returned")
 
       if (!abortController.signal.aborted) {
-        setFileItems((prev) =>
-          prev.map((item) =>
+        setFileItems(prev =>
+          prev.map(item =>
             item.id === fileId
-              ? { ...item, status: "success", url, progress: 100 }
-              : item))
+              ? {
+                ...item,
+                url,
+                previewUrl: url, // ✅ 여기서 미리보기 URL도 같이
+                status: "success",
+                progress: 100,
+              }
+              : item
+          )
+        )
+
         options.onSuccess?.(url)
-        return url
+        return url // ✅ tiptap으로 그대로 넘어감
       }
 
       return null
     } catch (error) {
       if (!abortController.signal.aborted) {
-        setFileItems((prev) =>
-          prev.map((item) =>
+        setFileItems(prev =>
+          prev.map(item =>
             item.id === fileId
               ? { ...item, status: "error", progress: 0 }
-              : item))
+              : item
+          )
+        )
         options.onError?.(error instanceof Error ? error : new Error("Upload failed"))
       }
       return null
     }
   }
+
+
+  // const uploadFile = async file => {
+  //   if (file.size > options.maxSize) {
+  //     const error = new Error(`File size exceeds maximum allowed (${options.maxSize / 1024 / 1024}MB)`)
+  //     options.onError?.(error)
+  //     return null
+  //   }
+
+  //   const abortController = new AbortController()
+  //   const fileId = Date.now() + Math.random()
+
+  //   const newFileItem = {
+  //     id: fileId,
+  //     file,
+  //     progress: 0,
+  //     status: "uploading",
+  //     abortController,
+  //   }
+
+  //   setFileItems((prev) => [...prev, newFileItem])
+
+  //   try {
+  //     if (!options.upload) {
+  //       throw new Error("Upload function is not defined")
+  //     }
+
+  //     const url = await options.upload(file, (event) => {
+  //       setFileItems((prev) =>
+  //         prev.map((item) =>
+  //           item.id === fileId ? { ...item, progress: event.progress } : item))
+  //     }, abortController.signal)
+
+  //     if (!url) throw new Error("Upload failed: No URL returned")
+
+  //     if (!abortController.signal.aborted) {
+  //       setFileItems((prev) =>
+  //         prev.map((item) =>
+  //           item.id === fileId
+  //             ? { ...item, status: "success", url, progress: 100 }
+  //             : item))
+  //       options.onSuccess?.(url)
+  //       return url
+  //     }
+
+  //     return null
+  //   } catch (error) {
+  //     if (!abortController.signal.aborted) {
+  //       setFileItems((prev) =>
+  //         prev.map((item) =>
+  //           item.id === fileId
+  //             ? { ...item, status: "error", progress: 0 }
+  //             : item))
+  //       options.onError?.(error instanceof Error ? error : new Error("Upload failed"))
+  //     }
+  //     return null
+  //   }
+  // }
 
   const uploadFiles = async files => {
     if (!files || files.length === 0) {
@@ -90,18 +174,22 @@ function useFileUpload(options) {
     return results.filter(url => url !== null);
   }
 
-  const removeFileItem = (fileId) => {
-    setFileItems((prev) => {
-      const fileToRemove = prev.find((item) => item.id === fileId)
-      if (fileToRemove?.abortController) {
-        fileToRemove.abortController.abort()
-      }
-      if (fileToRemove?.url) {
-        URL.revokeObjectURL(fileToRemove.url)
-      }
-      return prev.filter((item) => item.id !== fileId);
-    })
-  }
+const removeFileItem = (fileId) => {
+  setFileItems(prev => {
+    const fileToRemove = prev.find(item => item.id === fileId)
+
+    if (fileToRemove?.abortController) {
+      fileToRemove.abortController.abort()
+    }
+
+    // ✅ 부모 state에서도 같이 제거
+    options.setInEditorUploadFiles?.(prev =>
+      prev.filter(item => item.file !== fileToRemove.file)
+    )
+
+    return prev.filter(item => item.id !== fileId)
+  })
+}
 
   const clearAllFiles = () => {
     fileItems.forEach((item) => {
@@ -113,6 +201,7 @@ function useFileUpload(options) {
       }
     })
     setFileItems([])
+    options.setInEditorUploadFiles?.(() => []) // ✅ 수정: 부모 동기화
   }
 
   return {
@@ -250,6 +339,21 @@ const ImageUploadPreview = ({
       )}
       <div className="tiptap-image-upload-preview-content">
         <div className="tiptap-image-upload-file-info">
+          {fileItem.previewUrl && (
+            <img
+              src={fileItem.previewUrl}
+              alt="preview"
+              style={{
+                width: "100%",
+                maxHeight: "180px",
+                objectFit: "contain",
+                borderRadius: "6px",
+                marginBottom: "8px"
+              }}
+            />
+          )}
+
+
           <div className="tiptap-image-upload-file-icon">
             <CloudUploadIcon />
           </div>
@@ -320,12 +424,22 @@ export const ImageUploadNode = (props) => {
     upload: extension.options.upload,
     onSuccess: extension.options.onSuccess,
     onError: extension.options.onError,
+    setInEditorUploadFiles: extension.options.setInEditorUploadFiles
   }
 
   const { fileItems, uploadFiles, removeFileItem, clearAllFiles } =
     useFileUpload(uploadOptions)
 
   const handleUpload = async (files) => {
+    uploadOptions.setInEditorUploadFiles?.(prev => [
+...prev,
+...files.map(file => ({
+id: Date.now() + Math.random(),
+file,
+url: null
+}))
+])
+
     const urls = await uploadFiles(files)
 
     if (urls.length > 0) {
@@ -358,14 +472,10 @@ export const ImageUploadNode = (props) => {
     }
   }
 
-  const handleChange = (e) => {
-    const files = e.target.files
-    if (!files || files.length === 0) {
-      extension.options.onError?.(new Error("No file selected"))
-      return
-    }
-    handleUpload(Array.from(files))
-  }
+const handleChange = (e) => {
+  const files = Array.from(e.target.files)
+  handleUpload(files)
+}
 
   const handleClick = () => {
     if (inputRef.current && fileItems.length === 0) {
@@ -379,9 +489,24 @@ export const ImageUploadNode = (props) => {
   return (
     <NodeViewWrapper className="tiptap-image-upload" tabIndex={0} onClick={handleClick}>
       {!hasFiles && (
-        <ImageUploadDragArea onFile={handleUpload}>
-          <DropZoneContent maxSize={maxSize} limit={limit} />
-        </ImageUploadDragArea>
+          <ImageUploadDragArea
+    onFile={(files) => {
+      // ✅ [여기에서 사용자가 드래그한 파일을 부모에도 저장]
+      extension.options.setInEditorUploadFiles?.(prev => [
+        ...prev,
+        ...files.map(file => ({
+          id: Date.now() + Math.random(),
+          file,
+          url: null
+        }))
+      ])
+
+      // ✅ 기존 tiptap 업로드 수행
+      handleUpload(files)
+    }}
+  >
+        <DropZoneContent maxSize={maxSize} limit={limit} />
+      </ImageUploadDragArea>
       )}
       {hasFiles && (
         <div className="tiptap-image-upload-previews">

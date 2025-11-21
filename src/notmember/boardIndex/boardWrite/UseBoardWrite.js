@@ -22,7 +22,7 @@ export function UseBoardWrite() {
     };
     // ----------- 파일 상태변수 -----------
     const [uploadedFiles, setUploadedFiles] = useState([]);
-
+    const [inEditorUploadFiles, setInEditorUploadFiles] = useState([]);
 
     const editorRef = useRef(null);
     const titleRef = useRef(null);
@@ -86,6 +86,9 @@ export function UseBoardWrite() {
 
     //작성완료
     const handleComplete = async () => {
+        console.log("버튼 눌림")
+        console.log(inEditorUploadFiles);
+        console.log(editorRef.current)
         if (!editorRef.current) return;
         const form = new FormData();
         // 1) 파일 담기
@@ -99,6 +102,7 @@ export function UseBoardWrite() {
         const imageSysList = extractImages(contentJSON);
         form.append("imageSysList", JSON.stringify(imageSysList));
 
+        
 
         // 3) 나머지 값 담기
         form.append("title", titleRef.current.value);
@@ -112,7 +116,7 @@ export function UseBoardWrite() {
                 .then(resp => {
                     console.log(resp);
                     alert("작성이 완료되었습니다!")
-                    navigate("/board");
+                    //navigate("/board");
                 })
 
 
@@ -131,6 +135,7 @@ export function UseBoardWrite() {
         formatFileSize,
         handleFileSelect,
         handleFileRemove,
+        setInEditorUploadFiles,
 
         titleRef,
         editorRef,

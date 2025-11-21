@@ -17,6 +17,8 @@ const BoardWrite = () => {
       formatFileSize,
       handleFileSelect,
       handleFileRemove,
+      setInEditorUploadFiles,
+
       titleRef,
       editorRef,
       uploadedFiles,
@@ -161,7 +163,7 @@ const BoardWrite = () => {
 
       {/* 에디터 영역 */}
       <div className={styles.editorArea}>
-          <SimpleEditor ref={editorRef} />
+        <SimpleEditor ref={editorRef} setInEditorUploadFiles={setInEditorUploadFiles}/>
       </div>
 
       {/* 액션 버튼 */}
