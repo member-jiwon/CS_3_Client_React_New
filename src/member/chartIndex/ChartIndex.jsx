@@ -7,8 +7,11 @@ import styles from "./ChartIndex.module.css";
 import { FETAL_STANDARDS } from "./FetalStandardData";
 import { caxios } from "../../config/config";
 import { useChartIndex } from "./UseChartIndex";
+import useAuthStore from "../../store/useStore";
 
 const ChartIndex = () => {
+
+  const babySeqFromStore = useAuthStore(state => state.babySeq);
   // 2.  Hook을 호출하여 모든 상태와 데이터를 가져옵니다.
   const {
     menuList,
@@ -17,7 +20,10 @@ const ChartIndex = () => {
     setActiveMenu,
     currentStandardData,
     currentActualData: actualData,
-  } = useChartIndex();
+  } = useChartIndex(babySeqFromStore);
+
+
+
 
   // 3.  로딩 상태 처리
   if (currentWeek === 0 || actualData === null || !currentStandardData) {

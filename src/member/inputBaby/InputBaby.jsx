@@ -5,12 +5,12 @@ import oneImg from "./img/one.png";
 import twoImg from "./img/two.png";
 import threeImg from "./img/three.png";
 import fourImg from "./img/four.png";
-import useInputBaby from "./useInputBaby";
+import useInputBaby from "./UseInputBaby";
 
 const InputBaby = ({ type = "mom", onClose, fromChooseType = false }) => {
   const [inputBlocks, setInputBlocks] = useState([
     { name: "", gender: "", image_name: "", birth_date: "" }
-  ]); 
+  ]);
   const clickplusRef = useRef(null);
 
   const handleAdd = () => {
@@ -104,8 +104,8 @@ const InputBaby = ({ type = "mom", onClose, fromChooseType = false }) => {
                       <img
                         src={
                           val === "one" ? oneImg :
-                          val === "two" ? twoImg :
-                          val === "three" ? threeImg : fourImg
+                            val === "two" ? twoImg :
+                              val === "three" ? threeImg : fourImg
                         }
                         alt={val}
                         className={styles[`${val}Image`]}

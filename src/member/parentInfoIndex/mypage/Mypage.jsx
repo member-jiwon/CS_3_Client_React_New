@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
-import useMypage from "./useMypage";
+import useMypage from "./UseMypage";
 const Mypage = () => {
   const [isEditing, setIsEditing] = useState(false); // 수정 상태변수
 
-  const {data} =useMypage();
+  const { data } = useMypage();
 
   return (
     <div className={styles.container}>
@@ -49,42 +49,42 @@ const Mypage = () => {
             <div className={styles.dbbirth}>♥ DB에서 가져올 생일 ♥</div>
 
             {/* 전화번호 */}
-<div className={styles.phone}>
-  <label htmlFor="phone">연락처</label>
-  <div className={styles.phoneWrapper}>
-    {/* 010은 항상 보여주기 */}
-    <span
-  className={isEditing ? styles.prefixActive : styles.prefix}
->
-  010
-</span>
-    <span className={styles.dash}>-</span>
+            <div className={styles.phone}>
+              <label htmlFor="phone">연락처</label>
+              <div className={styles.phoneWrapper}>
+                {/* 010은 항상 보여주기 */}
+                <span
+                  className={isEditing ? styles.prefixActive : styles.prefix}
+                >
+                  010
+                </span>
+                <span className={styles.dash}>-</span>
 
-    {isEditing ? (
-      <>
-        <input
-          id="phone1"
-          type="tel"
-          placeholder="연락처"
-          className={styles.editableInput}
-        />
-        <span className={styles.dash}>-</span>
-        <input
-          id="phone2"
-          type="tel"
-          placeholder="연락처"
-          className={styles.editableInput}
-        />
-      </>
-    ) : (
-      <>
-        <div className={styles.dbValue} style={{ height: "48px", lineHeight: "48px" }}>1234</div>
-        <span className={styles.dash}>-</span>
-        <div className={styles.dbValue} style={{ height: "48px", lineHeight: "48px" }}>5678</div>
-      </>
-    )}
-  </div>
-</div>
+                {isEditing ? (
+                  <>
+                    <input
+                      id="phone1"
+                      type="tel"
+                      placeholder="연락처"
+                      className={styles.editableInput}
+                    />
+                    <span className={styles.dash}>-</span>
+                    <input
+                      id="phone2"
+                      type="tel"
+                      placeholder="연락처"
+                      className={styles.editableInput}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.dbValue} style={{ height: "48px", lineHeight: "48px" }}>1234</div>
+                    <span className={styles.dash}>-</span>
+                    <div className={styles.dbValue} style={{ height: "48px", lineHeight: "48px" }}>5678</div>
+                  </>
+                )}
+              </div>
+            </div>
 
           </div>
         </div>

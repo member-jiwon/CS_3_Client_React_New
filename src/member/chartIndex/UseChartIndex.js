@@ -25,37 +25,58 @@ export const useChartIndex = (babySeq) => {
 
     // 3. PHASE 1: 초기 데이터 로드 및 currentWeek 계산 (EDD/Status -> Week)
     useEffect(() => {
+        
+if (typeof babySeq !== 'number' || babySeq <= 0) { 
+            // setCurrentWeek(28) 기본값 설정 로직 제거. 0 (로딩 상태)을 유지합니다.
+            return; 
+        }
+
         const fetchInitialState = async () => {
             try {
                 // Baby 정보 조회
                 const babyResponse = await caxios.get(`/chart/${babySeq}`);
-                const { status, birthDate, baby_seq } = babyResponse.data;
-
+                
+                
+                
+                const { status, birth_date, baby_seq : seq } = babyResponse.data;
+                
                // 서버 API 호출 대신, 클라이언트 유틸리티를 사용해 주차 계산
             const todayStr = new Date().toISOString().split('T')[0]; // 오늘 날짜 'YYYY-MM-DD'
             let calculatedWeek;
+                
+            console.log("DEBUG: birthDate string:", birth_date); // 1번
+                console.log("DEBUG: todayStr string:", todayStr);   // 2번
+                console.log("DEBUG: birthDate Type:", typeof birth_date); // 3번
 
-            if ("fetal".equalsIgnoreCase(status)) {
+            if ("fetus".toLowerCase() === status.toLowerCase()) {
                  // 태아 주차 계산
-                 calculatedWeek = calculateFetalWeek(birthDate, todayStr);
+                 console.log("fetus"); 
+                 calculatedWeek = calculateFetalWeek(birth_date, todayStr);
+
+                 console.log("1"+calculatedWeek); 
             } else {
                  // 영유아 주차 계산
-                 calculatedWeek = calculateInfantWeek(birthDate, todayStr);
+                 console.log("infant"); 
+                 calculatedWeek = calculateInfantWeek(birth_date, todayStr);
             }
                 
+
+
+
+
                 // 상태 업데이트
-                setBabyInfo({ babySeq: baby_seq, status, birthDate });
+                setBabyInfo({ babySeq: seq, status, birth_date });
                 setCurrentWeek(calculatedWeek); 
 
             } catch (error) {
                 console.error("초기 데이터 로딩 오류:", error);
                 setCurrentWeek(28); // 오류 시 기본값 설정
-                setBabyInfo({ baby_seq: babySeq, status: 'FETUS', birth_date: '2026-01-01' }); 
+                setBabyInfo({ babySeq: babySeq, status: 'FETUS', birthDate: '2026-01-01' }); 
             }
         };
         
         fetchInitialState();
-    }, []); 
+    }, [babySeq]); 
 
 
     // 4. PHASE 2: 실제 측정 데이터 조회 (currentWeek 확정 후 실행)
@@ -65,7 +86,7 @@ export const useChartIndex = (babySeq) => {
         const fetchActualData = async () => {
             setActualData(null); 
             try {
-                const response = await caxios.get(`/api/fetal/measurement/current`, {
+                const response = await caxios.get(`/chart/total`, {
                     params: { babyId: babyInfo.babySeq, week: currentWeek }
                 });
                 setActualData(response.data || {}); 
