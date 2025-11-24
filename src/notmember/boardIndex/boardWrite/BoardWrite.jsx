@@ -7,29 +7,30 @@ import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor
 
 
 const BoardWrite = () => {
-    const {
-      handleBack,
-      handleComplete,
-      handleVisibilityChange,
-      handleSelect,
-      setIsOpen,
-      setUploadedFiles,
-      formatFileSize,
-      handleFileSelect,
-      handleFileRemove,
-      setInEditorUploadFiles,
+  const {
+    handleBack,
+    handleComplete,
+    handleVisibilityChange,
+    handleSelect,
+    setIsOpen,
+    setUploadedFiles,
+    formatFileSize,
+    handleFileSelect,
+    handleFileRemove,
+    setInEditorUploadFiles,
 
-      titleRef,
-      editorRef,
-      uploadedFiles,
-      options,
-      isOpen,
-      selected,
-      selectedVisibility
-    } = UseBoardWrite();
+    setEditorInstance,
+    titleRef,
+    editorRef,
+    uploadedFiles,
+    options,
+    isOpen,
+    selected,
+    selectedVisibility
+  } = UseBoardWrite();
 
 
-  
+
 
   return (
     <div className={styles.editorContainer}>
@@ -58,7 +59,7 @@ const BoardWrite = () => {
             <span className={styles.selectText}>{selected}</span>
             <ChevronDown size={24} className={styles.selectIcon} />
           </div>
-          
+
           {/* 옵션 리스트 */}
           {isOpen && (
             <div className={styles.dropdownOptions}>
@@ -82,9 +83,8 @@ const BoardWrite = () => {
             {/* 전체 옵션 */}
             <label
               htmlFor="visibility-all"
-              className={`${styles.radioOption} ${
-                selectedVisibility === "all" ? styles.activeRadio : ""
-              }`}
+              className={`${styles.radioOption} ${selectedVisibility === "all" ? styles.activeRadio : ""
+                }`}
             >
               <input
                 type="radio"
@@ -101,9 +101,8 @@ const BoardWrite = () => {
             {/* 멤버 옵션 */}
             <label
               htmlFor="visibility-member"
-              className={`${styles.radioOption} ${
-                selectedVisibility === "member" ? styles.activeRadio : ""
-              }`}
+              className={`${styles.radioOption} ${selectedVisibility === "member" ? styles.activeRadio : ""
+                }`}
             >
               <input
                 type="radio"
@@ -120,7 +119,7 @@ const BoardWrite = () => {
         </div>
       </div>
 
-          {/* 파일 업로드 영역 추가 */}
+      {/* 파일 업로드 영역 추가 */}
       <div className={styles.fileUploadArea}>
         <label className={styles.formLabel}>파일 첨부</label>
         <div className={styles.uploadContainer}>
@@ -163,7 +162,7 @@ const BoardWrite = () => {
 
       {/* 에디터 영역 */}
       <div className={styles.editorArea}>
-        <SimpleEditor ref={editorRef} setInEditorUploadFiles={setInEditorUploadFiles}/>
+        <SimpleEditor ref={editorRef} setInEditorUploadFiles={setInEditorUploadFiles} setEditorInstance={setEditorInstance} />
       </div>
 
       {/* 액션 버튼 */}

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { caxios } from "../../../config/config";
 import { useNavigate } from "react-router-dom";
-
+import imageCompression from "browser-image-compression";
 
 
 export function UseBoardWrite() {
@@ -24,6 +24,7 @@ export function UseBoardWrite() {
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [inEditorUploadFiles, setInEditorUploadFiles] = useState([]);
 
+    const [editorInstance, setEditorInstance] = useState(null);
     const editorRef = useRef(null);
     const titleRef = useRef(null);
 
@@ -70,7 +71,7 @@ export function UseBoardWrite() {
         navigate(-1);
     }
 
-    // 작성완료된 글에서 미리보기된 파일 sysname 추출
+    // imageSysList용 :작성완료된 글에서 미리보기된 파일 sysname 추출
     const extractImages = (node, arr = []) => {
         if (!node) return arr;
         if (node.type === "image") {
@@ -84,12 +85,53 @@ export function UseBoardWrite() {
         return arr;
     };
 
+
+    //thumbnail용: 썸네일 파일 추출 함수
+    const extractThumbnailFile = (contentJSON, inEditorUploadFiles) => { //에디터 객체 전체, 에디터에 업로드되었던 파일 리스트
+        let firstImageUrl = null;
+        const findFirstImage = (node) => {
+            if (!node || firstImageUrl) return;
+            if (node.type === "image") {//노드 타입이 이미지이면
+                firstImageUrl = node.attrs.src; //첫번째 이미지 URL 저장
+                return;
+            }
+            if (node.content) {
+                node.content.forEach(findFirstImage);
+            }
+        };
+        findFirstImage(contentJSON);//에디터 객체 전체를 돌려서 첫번째 이미지 URL 찾기
+
+        if (!firstImageUrl) return null;
+        const matched = inEditorUploadFiles.find(item => item.url === firstImageUrl);//에디터에 업로드되었던 파일 리스트에서 URL이 일치하는 파일 찾기
+        return matched?.file || null;
+    };
+
+    //thumbnail 압축시키기
+    const compressImage = async (file) => {
+        const options = {
+            maxSizeMB: 0.3,
+            maxWidthOrHeight: 500,
+            useWebWorker: true//성능향상
+        }
+
+        try {
+            const compressedBlob = await imageCompression(file, options); //blob으로 압축
+            const compressedFile = new File(//파일객체로 변환
+                [compressedBlob],
+                file.name,
+                { type: compressedBlob.type }
+            );
+            return compressedFile;
+        } catch (error) {
+            console.error("이미지 압축 오류:", error);
+            return file;
+        }
+    }
+
     //작성완료
     const handleComplete = async () => {
-        console.log("버튼 눌림")
-        console.log(inEditorUploadFiles);
-        console.log(editorRef.current)
-        // if (!editorRef.current) return;
+        if (!editorInstance) return;
+
         const form = new FormData();
         // 1) 파일 담기
         uploadedFiles.forEach(file => {
@@ -97,26 +139,30 @@ export function UseBoardWrite() {
         });
 
 
-        //2-1) 에디터 내 업로드된 파일들 담기
-        const validFiles = inEditorUploadFiles.filter(file =>
-            imageSysList.includes(file.url)
-        );
-        console.log("유효한 에디터 파일들:", validFiles);
-        return
-
-
         // 2) 에디터 JSON 담기
-        const contentJSON = editorRef.current.getJSON();
+        const contentJSON = editorInstance.getJSON();
+        console.log("에디터 내용:", contentJSON);
         form.append("content", JSON.stringify(contentJSON));
+
         const imageSysList = extractImages(contentJSON);
+        console.log("이미지 리스트:", imageSysList);
         form.append("imageSysList", JSON.stringify(imageSysList));
 
+        //3) 작성 완료 시, 실제 보내지는 이미지 리스트와 미리보기 배열과 비교해서 썸네일 파일 한개 추출
+        // 썸네일 파일 추출 기준: 1. 실제로 작성 완료시 보내진 에디터에 포함된 파일일 것 2.가장 첫번째 사진일 것
+        const thumbnailFile = extractThumbnailFile(contentJSON, inEditorUploadFiles);
+        const compressedThumbnail = thumbnailFile ? await compressImage(thumbnailFile) : null;
+        console.log("in에디터 파일들:", inEditorUploadFiles);
+        console.log("유효한 에디터 파일들:", thumbnailFile);
+        form.append("thumbnail", compressedThumbnail);
 
 
         // 3) 나머지 값 담기
         form.append("title", titleRef.current.value);
+
         const board_type = CATEGORY_MAP[selected];
         form.append("board_type", board_type);
+
         let is_privated = selectedVisibility === "member" ? true : false;
         if (selectedVisibility)
             form.append("is_privated", is_privated);
@@ -125,7 +171,7 @@ export function UseBoardWrite() {
                 .then(resp => {
                     console.log(resp);
                     alert("작성이 완료되었습니다!")
-                    //navigate("/board");
+                    navigate("/board");
                 })
 
 
@@ -145,6 +191,7 @@ export function UseBoardWrite() {
         handleFileSelect,
         handleFileRemove,
         setInEditorUploadFiles,
+        setEditorInstance,
 
         titleRef,
         editorRef,

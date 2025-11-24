@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react"
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 
 // --- Tiptap Core Extensions ---
@@ -158,8 +158,8 @@ const MobileToolbarContent = ({
     )}
   </>
 )
-
-export function SimpleEditor({ setInEditorUploadFiles }) {
+export function SimpleEditor({ setInEditorUploadFiles, setEditorInstance }) {
+  //export function SimpleEditor({ setInEditorUploadFiles }) {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
   const [mobileView, setMobileView] = useState("main")
@@ -167,6 +167,15 @@ export function SimpleEditor({ setInEditorUploadFiles }) {
 
   const editor = useEditor({
     immediatelyRender: false,
+
+
+    // ✅ 여기서 수정시작
+    onCreate({ editor }) {
+      setEditorInstance?.(editor)
+    },
+    // ✅ 여기서 수정끝
+
+
     editorProps: {
       attributes: {
         autocomplete: "off",
@@ -203,7 +212,7 @@ export function SimpleEditor({ setInEditorUploadFiles }) {
         setInEditorUploadFiles: setInEditorUploadFiles,
       }),
     ],
-    content:"",
+    content: "",
   })
 
   const rect = useCursorVisibility({
@@ -225,10 +234,10 @@ export function SimpleEditor({ setInEditorUploadFiles }) {
           style={{
             ...(isMobile
               ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
+                bottom: `calc(100% - ${height - rect.y}px)`,
+              }
               : {}),
-              flex: "unset"
+            flex: "unset"
           }}>
           {mobileView === "main" ? (
             <MainToolbarContent

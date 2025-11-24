@@ -117,7 +117,7 @@ const BoardList = () => {
                     alt=""
                     className={styles.cardImage}
                   />
-
+                  {console.log("썸네일 주소", thumbsUrlMap)}
                   <button className={styles.menuBtn} onClick={handleMenuClick}>
                     <MoreHorizontal size={24} />
                   </button>
@@ -154,7 +154,7 @@ const BoardList = () => {
 
       </div>
 
-      {/* 페이지네이션은 나중에 분리 가능 */}
+
       <div className={styles.pagination}>
         <PageNaviBar page={page} setPage={setPage} count={count} totalCount={totalCount} typeBtn={typeBtn} />
       </div>

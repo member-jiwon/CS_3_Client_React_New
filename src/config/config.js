@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const caxios = axios.create({
-  baseURL: `http://192.168.0.3/`
+  baseURL: `http://10.10.55.103/`
 });
 
 //모든 일반 api 호출

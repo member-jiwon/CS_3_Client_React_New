@@ -33,7 +33,8 @@
 
 .backButtonText:hover {
   background-color: #a0a0a0;
-  transform: scale(0.95); /* 약간 축소 효과 */
+  transform: scale(0.95);
+  /* 약간 축소 효과 */
 }
 
 .backButtonText:active {
@@ -45,7 +46,8 @@
   display: flex;
   flex: 1;
   gap: 24px;
-  overflow: hidden; /* 영역 내 스크롤 관리 */
+  overflow: hidden;
+  /* 영역 내 스크롤 관리 */
 }
 
 /* 게시글 내용 영역 */
@@ -61,6 +63,7 @@
   gap: 20px;
   overflow-y: auto;
 }
+
 .postHeader {
   display: flex;
   flex-direction: column;
@@ -69,16 +72,19 @@
   border-bottom: 1px solid #c5c5c5;
   gap: 12px;
 }
+
 .postTitleWrapper {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .postTitle {
   font-size: 22px;
   font-weight: bold;
 }
+
 .authorNicknameWrapper {
   font-size: 16px;
   color: #696b70;
@@ -89,12 +95,16 @@
   color: #696b70;
   overflow-y: auto;
 }
+
 .postBodyText {
   font-size: 16px;
 }
 
 /* --- 댓글 영역 --- */
 .commentSection {
+  /* --- 지원추가--- */
+  height: 100%;
+
   width: 548px;
   border-radius: 22px;
   background: #fff4d6;
@@ -102,20 +112,24 @@
   flex-direction: column;
   overflow: hidden;
 }
+
 .commentListWrapper {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
 }
+
 .commentList {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* 상위 댓글/답글 그룹 간의 간격 */
+  gap: 8px;
+  /* 상위 댓글/답글 그룹 간의 간격 */
 }
 
 /* 댓글 아이템 컨테이너 */
 .parentCommentWrapper {
-  margin-bottom: 16px; /* 상위 댓글 그룹 하단 간격 */
+  margin-bottom: 16px;
+  /* 상위 댓글 그룹 하단 간격 */
 }
 
 /* 상위 댓글 */
@@ -131,6 +145,7 @@
   padding-left: 40px;
   margin-top: 10px;
 }
+
 /* 답글 본체 */
 .replyComment {
   background: #fff;
@@ -141,7 +156,7 @@
 /* 댓글 작성자 헤더 */
 .commentUserHeader {
   display: flex;
-  
+
   justify-content: space-between;
   align-items: center;
 }
@@ -151,11 +166,13 @@
   font-weight: bold;
   font-size: 16px;
 }
+
 .commentTextWrapper {
   margin: 10px 0 10px 16px;
   font-size: 16px;
   color: #696b70;
 }
+
 .commentFooter {
   display: flex;
   gap: 10px;
@@ -163,9 +180,11 @@
   color: #b2b2b2;
   padding-left: 20px;
 }
+
 .commentDate {
   font-weight: 600;
 }
+
 .replyButton {
   cursor: pointer;
   color: #adb9e3;
@@ -176,12 +195,14 @@
 .paginationWrapper {
   background: #fff4d6;
 }
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
 }
+
 .pageControl {
   background: none;
   border: none;
@@ -190,14 +211,18 @@
   align-items: center;
   gap: 0px;
 }
+
 .pageControl:disabled {
-  opacity: 0.4; /* 비활성화 버튼 시 투명도 */
+  opacity: 0.4;
+  /* 비활성화 버튼 시 투명도 */
   cursor: default;
 }
+
 .pageNumbers {
   display: flex;
   gap: 8px;
 }
+
 .pageBtn {
   width: 30px;
   height: 30px;
@@ -208,6 +233,7 @@
   font-size: 14px;
   font-weight: 500;
 }
+
 .activePage {
   background-color: #adb9e3;
   color: #fff;
@@ -219,6 +245,7 @@
   padding: 20px;
   background: #fff4d6;
 }
+
 .commentInputBox {
   display: flex;
   align-items: center;
@@ -228,6 +255,7 @@
   border: 1px solid #c5c5c5;
   padding: 4px 6px 4px 16px;
 }
+
 .inputField {
   flex: 1;
 }
@@ -243,6 +271,7 @@
   color: #333;
   padding: 0;
 }
+
 .inputElement::placeholder {
   color: #999;
 }
@@ -257,12 +286,16 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.1s ease, background-color 0.1s ease; /* 전환 효과 */
+  transition: transform 0.1s ease, background-color 0.1s ease;
+  /* 전환 효과 */
 }
+
 .submitButton:hover {
   background-color: #e6c91f;
-  transform: scale(0.95); /* 약간 축소 효과 */
+  transform: scale(0.95);
+  /* 약간 축소 효과 */
 }
+
 .submitButton:active {
   background-color: #f0d827;
 }

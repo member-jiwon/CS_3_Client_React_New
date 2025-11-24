@@ -65,29 +65,54 @@ function useFileUpload(options) {
       const url = resp.data.url
 
       if (!url) throw new Error("Upload failed: No URL returned")
-
       if (!abortController.signal.aborted) {
-        setFileItems(prev => {
-          if (!prev.some(item => item.id === fileId)) {
-            return prev;
-          }
-
-          return prev.map(item =>
+        setFileItems(prev =>
+          prev.map(item =>
             item.id === fileId
               ? {
                 ...item,
                 url,
-                previewUrl: url, // ✅ 여기서 미리보기 URL도 같이
+                previewUrl: url,
                 status: "success",
                 progress: 100,
               }
               : item
           )
-        })
+        );
 
-        options.onSuccess?.(url)
-        return url // ✅ tiptap으로 그대로 넘어감
+        // ✅ 여기가 핵심 (부모로 URL 전달)
+        options.setInEditorUploadFiles?.(prev =>
+          prev.map(item =>
+            item.file === file
+              ? { ...item, url }   // ✅ url 주입
+              : item
+          )
+        );
+
+        return url;
       }
+      // if (!abortController.signal.aborted) {
+      //   setFileItems(prev => {
+      //     if (!prev.some(item => item.id === fileId)) {
+      //       return prev;
+      //     }
+
+      //     return prev.map(item =>
+      //       item.id === fileId
+      //         ? {
+      //           ...item,
+      //           url,
+      //           previewUrl: url, // ✅ 여기서 미리보기 URL도 같이
+      //           status: "success",
+      //           progress: 100,
+      //         }
+      //         : item
+      //     )
+      //   })
+
+      //   options.onSuccess?.(url)
+      //   return url // ✅ tiptap으로 그대로 넘어감
+      // }
 
       return null
     } catch (error) {

@@ -17,7 +17,10 @@ const CATEGORY_MAP_REVERSE = Object.fromEntries(
 // 썸네일 blob url 생성
 async function getThumbUrl(sysname) {
     const resp = await caxios.get("/file/download", {
-        params: { sysname },
+        params: {
+            sysname: sysname,
+            file_type: "board/thumb"
+        },
         responseType: "blob",
     });
     return URL.createObjectURL(resp.data);
@@ -71,6 +74,8 @@ export function UseBoardList() {
 
     // ----------- 데이터 서버에서 받아오기 -----------
     useEffect(() => {
+
+
         Object.values(thumbsUrlMap).forEach(url => URL.revokeObjectURL(url));
         async function load() {
             let resp;
@@ -79,11 +84,13 @@ export function UseBoardList() {
                 resp = await caxios.get("/board", {
                     params: { target: findTarget, board_type: typeBtn, page: page }
                 });
+
                 //아니면 기본 목록
             } else {
                 resp = await caxios.get("/board", {
                     params: { board_type: typeBtn, page: page }
                 });
+                console.log("파일리스트 오는지", resp);
             }
             await processBoardData(resp.data);
         }
@@ -132,25 +139,26 @@ export function UseBoardList() {
 
 
     // ----------- 버튼 onclick -----------
-    const handleTopBtn = (cat) => {
+    //수정, 삭제 버튼 index에서 생성후 list와 detail로 props전달함 : seq번호만 전달하면 됨
+    const handleTopBtn = (cat) => { //상단 카테고리 선택 버튼
         setActiveCategory(cat);
         setTypeBtn(CATEGORY_MAP[cat]);
         setPage(1);
     };
 
-    const handleCardClick = (id) => {
-        console.log(`${id}번 게시글로 이동!`);
+    const handleCardClick = (id) => {//카드 클릭 시 상세페이지로 이동
+        navigate(`/board/detail?seq=${id}`);
     };
 
-    const handleMenuClick = (e) => {
+    const handleMenuClick = (e) => { //카드 내 메뉴 클릭 시 이벤트 버블링 방지
         e.stopPropagation();
     };
 
-    const handleFindTarget = (e) => {
+    const handleFindTarget = (e) => { //검색어 입력
         setFindTarget(e.target.value);
     }
 
-    const handleSendFindTarget = (e) => {
+    const handleSendFindTarget = (e) => { //검색어 전송
         setIsSearching(true);
         caxios.get("/board", {
             params: { target: findTarget, board_type: typeBtn, page: 1 }
@@ -162,7 +170,7 @@ export function UseBoardList() {
             });
     };
 
-    const clearSearch = () => {
+    const clearSearch = () => { //검색 초기화
         setFindTarget("");
         setIsSearching(false);
         setPage(1);
@@ -176,7 +184,6 @@ export function UseBoardList() {
     };
     // 글작성 버튼 클릭 시 이동 함수
     const toWrite = () => {
-        console.log("글작성 페이지로 이동!");
         navigate("/board/write");
     };
 
