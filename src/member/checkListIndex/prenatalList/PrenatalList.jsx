@@ -1,27 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import styles from "./PrenatalList.module.css";
+import { FETAL_CHECKLIST, BABY_CHECKLIST } from "./checklistData";
+import UsePrenatalList from "./UsePrenatalList";
 
-const FETAL_CHECKLIST = [
-  {
-    id: 1,
-    week: "12주차",
-    checks: [
-      { id: 1, title: "첫 번째 검사", date: "2025-11-25" },
-      { id: 2, title: "예약", date: "" },
-    ],
-  },
-];
-
-const BABY_CHECKLIST = [
-  {
-    id: 1,
-    week: "1개월",
-    checks: [{ id: 1, title: "첫 번째 예방접종", date: "" }],
-  },
-];
-
-// --- CheckItem: 개별 체크리스트 항목 컴포넌트 ---
+// --- CheckItem ---
 const CheckItem = ({ check, onToggle }) => {
   // 완료 상태에 따라 다른 CSS 클래스 적용
   const checkCircleClass = check.isDone
@@ -37,20 +20,20 @@ const CheckItem = ({ check, onToggle }) => {
       transition={{ duration: 0.4 }}
     >
       <div className={styles.checkRow}>
-        <button
-          className={checkCircleClass}
-          onClick={() => onToggle(check)} // check 전체 객체 전달
-        />
+        <button className={checkCircleClass} onClick={() => onToggle(check)} />
         <div className={styles.checkContent}>
           <b className={styles.checkTitle}>{check.title}</b>
-          <div className={styles.checkDate}>{check.date}</div>
+          <div className={styles.checkDate}>
+            {check.date}
+            {check.is_checked === "Y" && "  (예약 일정)"}
+          </div>
         </div>
       </div>
     </motion.div>
   );
 };
 
-// --- WeekSection: 주차/월령별 섹션 컨테이너 컴포넌트 ---
+// --- WeekSection ---
 const WeekSection = ({ data, onToggle, isSpecialWeek }) => {
   // isSpecialWeek (가장 최근/현재 주차) 여부에 따라 스타일 클래스 결정
   const containerClass = isSpecialWeek
@@ -80,7 +63,6 @@ const WeekSection = ({ data, onToggle, isSpecialWeek }) => {
               </div>
             </div>
 
-            {/* CheckItem 목록 렌더링 */}
             <div className={styles.checkList}>
               {data.checks.map((check) => (
                 <CheckItem key={check.id} check={check} onToggle={onToggle} />
@@ -93,84 +75,121 @@ const WeekSection = ({ data, onToggle, isSpecialWeek }) => {
   );
 };
 
-// --- PrenatalList 메인 컴포넌트: 체크리스트와 모달을 관리 ---
+// --- PrenatalList ---
 const PrenatalList = ({ babyData }) => {
   const isInfant = babyData?.status === "infant";
-
-  // 모달 표시 여부를 관리하는 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // 체크리스트 데이터 상태
   const [checklist, setChecklist] = useState([]);
-  // 모달용 체크 버튼
   const [selectedCheck, setSelectedCheck] = useState(null);
+  const [checkClicked, setCheckClicked] = useState(false);
 
-  // 아기 상태(태아/영아)에 따라 초기 체크리스트 데이터를 결정
   const checklistInitial = useMemo(() => {
     return isInfant ? BABY_CHECKLIST : FETAL_CHECKLIST;
   }, [isInfant]);
 
-  // babyData나 checklistInitial이 변경될 때 체크리스트를 초기화
+  const { data, setData, handelChange, dataInsert, dataDelect, selectList } =
+    UsePrenatalList(
+      setChecklist,
+      setIsModalOpen,
+      setCheckClicked,
+      selectedCheck
+    );
+
   useEffect(() => {
     if (!babyData) return;
 
-    // 모든 항목의 isDone 상태를 false로 초기화
-    setChecklist(
-      checklistInitial.map((section) => ({
-        ...section,
-        checks: section.checks.map((check) => ({ ...check, isDone: false })),
-      }))
-    );
+    const init = checklistInitial.map((section) => ({
+      ...section,
+      checks: section.checks.map((ch) => ({
+        ...ch,
+        isDone: false,
+      })),
+    }));
+
+    setChecklist(init);
   }, [babyData, checklistInitial]);
 
-  // 모달을 닫는 함수
-  const handleCloseModal = () => setIsModalOpen(false);
+  useEffect(() => {
+    if (checklist.length > 0) {
+      selectList();
+    }
+  }, [checklist.length]);
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setCheckClicked(false);
+    setSelectedCheck(null);
+    setData((prev) => ({
+      ...prev,
+      test_code: "",
+      is_checked: "",
+      created_at: "",
+    }));
+  };
 
-  // 체크 버튼 클릭 핸들러
+  // 완료 버튼
+  const handleComplete = () => {
+    dataInsert(selectedCheck.id, () => {
+      setChecklist((prev) =>
+        prev.map((section) => ({
+          ...section,
+          checks: section.checks.map((c) =>
+            c.id === selectedCheck.id ? { ...c, isDone: true } : c
+          ),
+        }))
+      );
+      handleCloseModal();
+    });
+  };
+
+  // 체크 버튼 클릭
   const handleToggleCheck = (check) => {
-    if (check.title.includes("예약")) {
-      // 예약이면 모달 열기
+    if (!check.isDone) {
       setSelectedCheck(check);
       setIsModalOpen(true);
-      return;
-    }
+      setCheckClicked(false);
 
-    // 키워드 미포함 시: 해당 항목의 isDone 상태를 토글
-    setChecklist((prev) =>
-      prev.map((section) => ({
-        ...section,
-        checks: section.checks.map((c) =>
-          c.id === check.id ? { ...c, isDone: !c.isDone } : c
-        ),
-      }))
-    );
+      setData((prev) => ({
+        ...prev,
+        test_code: check.id,
+        is_checked: "N",
+        created_at: "",
+      }));
+    } else {
+      dataDelect(check.id);
+      setChecklist((prev) =>
+        prev.map((section) => ({
+          ...section,
+          checks: section.checks.map((c) =>
+            c.id === check.id ? { ...c, isDone: false } : c
+          ),
+        }))
+      );
+    }
   };
 
   if (!babyData) return null;
 
   return (
     <>
-      {/* 체크리스트 메인 컨테이너 */}
       <div className={styles.container}>
-        {/* 타임라인 배경선 컨테이너 */}
         <div className={styles.lineContainer}>
           <div className={styles.verticalLine} />
         </div>
 
-        {/* 주차 섹션 목록을 렌더링 */}
         <div className={styles.sectionsWrapper}>
           {checklist.map((section, index) => (
             <WeekSection
               key={section.id}
               data={section}
-              isSpecialWeek={index === 0} // 첫 번째 섹션을 강조
+              isSpecialWeek={index === 0}
               onToggle={handleToggleCheck}
             />
           ))}
         </div>
       </div>
 
-      {/* --- 검진 예약 모달 팝업 --- */}
-      {isModalOpen && (
+      {isModalOpen && selectedCheck && (
         <div className={styles.modalOverlay}>
           <div className={styles.innerWrapper}>
             <div className={styles.modalContent}>
@@ -183,8 +202,33 @@ const PrenatalList = ({ babyData }) => {
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>예약 날짜</label>
                   <div className={styles.row}>
-                    <input type="date" className={styles.inputBox} />
-                    <button className={styles.confirmBtn}>예약 확인</button>
+                    <input
+                      type="date"
+                      name="date"
+                      value={data.created_at}
+                      onChange={handelChange}
+                      min={
+                        checkClicked
+                          ? new Date().toISOString().split("T")[0]
+                          : undefined
+                      }
+                      className={styles.inputBox}
+                    />
+                  </div>
+
+                  <div
+                    className={styles.row}
+                    style={{ marginTop: "10px", gap: "20px" }}
+                  >
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="checkbox"
+                        checked={data.is_checked === "Y"}
+                        onChange={handelChange}
+                      />{" "}
+                      일정 예약
+                    </label>
                   </div>
                 </div>
 
@@ -192,10 +236,7 @@ const PrenatalList = ({ babyData }) => {
                   <button className={styles.backBtn} onClick={handleCloseModal}>
                     뒤로가기
                   </button>
-                  <button
-                    className={styles.submitBtn}
-                    onClick={handleCloseModal}
-                  >
+                  <button className={styles.submitBtn} onClick={handleComplete}>
                     완료
                   </button>
                 </div>

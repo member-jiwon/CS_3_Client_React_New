@@ -107,6 +107,7 @@
   background-color: #f0d827;
   z-index: 10;
 }
+
 .activeDotLine::after {
   content: "";
   position: absolute;
@@ -126,6 +127,7 @@
   background-color: #f0d827;
   z-index: 10;
 }
+
 .defaultDotLine::after {
   content: "";
   position: absolute;
@@ -276,23 +278,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 70px 30px;
+  padding: 30px;
   box-sizing: border-box;
 }
 
 /* modal content */
 .modalContent {
-  width: 400px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 70px;
+  gap: 30px;
 }
 
 /* headerSection */
 .headerSection {
-  width: 400px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -305,7 +307,7 @@
 
 .title {
   font-size: 32px;
-  font-weight: 800;
+  font-weight: bold;
   letter-spacing: 2.5px;
   text-transform: capitalize;
   color: #404040;
@@ -400,6 +402,14 @@
   cursor: pointer;
 }
 
+.backBtn:hover {
+  background-color: #f0d827;
+}
+
+.backBtn:active {
+  background-color: #f0d827;
+}
+
 .submitBtn {
   flex: 1;
   height: 48px;
@@ -411,4 +421,12 @@
   font-weight: 800;
   text-transform: capitalize;
   cursor: pointer;
+}
+
+.submitBtn:hover {
+  background-color: #f0d827;
+}
+
+.submitBtn:active {
+  background-color: #f0d827;
 }
