@@ -2,8 +2,12 @@ import styles from "./BabySideNavi.module.css";
 import { X, LogOut } from "lucide-react";
 import BabyController from "./babyController/BabyController";
 import BabyButton from "../../member/babyIndex/babyButton/BabyButton";
+import useAuthStore from "store/useStore";
+import { useNavigate } from "react-router-dom";
 
 const BabySideNavi = ({ onClose }) => {
+  const logout = useAuthStore(state=>state.logout);
+  const navi = useNavigate();
   return (
     <>
       {/* 배경 오버레이 */}
@@ -27,7 +31,7 @@ const BabySideNavi = ({ onClose }) => {
         </div>
         {/* 로그아웃 버튼 */}
         <div className={styles.logoutContainer}>
-          <button className={styles.logoutButton}>
+          <button className={styles.logoutButton} onClick={()=>{logout(); navi("/");}}>
             <LogOut /> 로그아웃
           </button>
         </div>

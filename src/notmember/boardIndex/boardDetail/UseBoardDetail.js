@@ -137,11 +137,10 @@ export function UseBoardDetail({ initialComments, handleDeleteBoard, handleEditB
                     comment_content: commentContent
                 })
                     .then(resp => {
-                        sendMessage("/app/notify", { 
-                            type: "NEW_COMMENT",
+                        sendMessage("/pub/notify", { 
+                            user_id : id,
                             board_seq: Number(seq),
-                            parent_comment_seq: parentCommentId,
-                            comment_content: commentContent
+                            parent_comment_seq: parentCommentId
                         });
                     });
 

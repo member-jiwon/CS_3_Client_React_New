@@ -4,12 +4,10 @@ import useAuthStore from "../../../store/useStore";
 import { useNavigate } from "react-router-dom";
 import { connectWebSocket } from "common/webSocket/connectWebSocket";
 
-function useLoginBox() {
+function useLoginBox(setBabySeq,setAlerts) {
     // 로그인 준비
     const { login, getbabySeq, setBabyDueDate } = useAuthStore((state) => state);
     const navigate = useNavigate();
-
-    const [alerts, setAlerts] = useState([]);
 
     // 값 받을 준비
     const [data, setData] = useState({ id: "", pw: "" });
@@ -36,9 +34,21 @@ function useLoginBox() {
                 const babyseq = Number(resp.data.babySeq);
                 login(resp.data.token, data.id);
                 getbabySeq(babyseq);
-                connectWebSocket(resp.data.token, (alert) => {
+                connectWebSocket(resp.data.token,data.id, (alert) => {
                     console.log('알람 수신:', alert);
-                    setAlerts(prev => [...prev, alert]);
+                    const processedAlert = {
+                        ...alert,
+                        message:
+                            alert.type === "C"
+                                ? alert.comment_seq && alert.comment_seq !== "0"
+                                    ? "게시물에 댓글이 입력되었습니다."
+                                    : "댓글에 댓글이 입력되었습니다."
+                                : alert.comment_seq && alert.comment_seq !== "0"
+                                    ? "게시물이 관리자에 의해 삭제되었습니다."
+                                    : "댓글이 관리자에 의해 삭제되었습니다."
+                    };
+
+                    setAlerts(prev => [processedAlert, ...prev]);
                 });
                 setBabyDueDate(resp.data.babyDueDate);
                 if (babyseq == 0) {

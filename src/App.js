@@ -8,19 +8,40 @@ import MainIndex from './notmember/mainIndex/MainIndex';
 import ChooseType from "./member/chooseType/ChooseType.jsx";
 import useAuthStore from './store/useStore.js';
 import InputBaby from "./member/inputBaby/InputBaby";
+import { connectWebSocket } from 'common/webSocket/connectWebSocket';
 
 function App() {
-  const { login, isLogin, getbabySeq } = useAuthStore((state) => state);
+  const { login, isLogin, getbabySeq, setBabyDueDate } = useAuthStore((state) => state);
   console.log("adsf", isLogin);
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
+    console.log(alerts);
     // 토큰 유지
     const token = sessionStorage.getItem("token");
     const id = sessionStorage.getItem("id");
     const babySeq = sessionStorage.getItem("babySeq");
+    const babyDueDate = sessionStorage.getItem("babyDueDate");
     if (token) {
       login(token, id);
       getbabySeq(babySeq);
+      setBabyDueDate(babyDueDate);
+      connectWebSocket(token, id, (alert) => {
+        console.log('알람 수신:', alert);
+        const processedAlert = {
+          ...alert,
+          message:
+            alert.type === "C"
+              ? alert.comment_seq || alert.comment_seq == "0"
+                ? "게시물에 댓글이 입력되었습니다."
+                : "댓글에 댓글이 입력되었습니다."
+              : alert.comment_seq || alert.comment_seq == "0"
+                ? "게시물이 관리자에 의해 삭제되었습니다."
+                : "댓글이 관리자에 의해 삭제되었습니다."
+        };
+
+        setAlerts(prev => [processedAlert, ...prev]);
+      });
     }
   }, []);
 
@@ -28,10 +49,10 @@ function App() {
     <div className="container">
       <BrowserRouter>
         <Routes>
-          <Route path='/login/*' element={ <Login /> } /> {/*여기서 로그인페이지, 비번찾기, 아이디 찾기 페이지 추가 라우팅됨*/}
-          <Route path='/signup/*' element={ <Signup /> } /> {/*회원가입*/}
+          <Route path='/login/*' element={<Login setAlerts={setAlerts} />} /> {/*여기서 로그인페이지, 비번찾기, 아이디 찾기 페이지 추가 라우팅됨*/}
+          <Route path='/signup/*' element={<Signup />} /> {/*회원가입*/}
           <Route path="/chooseType" element={<ChooseType />} /> {/*로그인 성공 하면 ChooseType 애기선택*/}
-          <Route path='/*' element={<MainIndex isLogin={isLogin} />} /> {/*탑바 + 바디있는 곳으로 이동*/}
+          <Route path='/*' element={<MainIndex isLogin={isLogin} alerts={alerts} setAlerts={setAlerts} />} /> {/*탑바 + 바디있는 곳으로 이동*/}
           <Route path="input-baby" element={<InputBaby />} />
         </Routes>
       </BrowserRouter>
