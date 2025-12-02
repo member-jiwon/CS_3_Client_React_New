@@ -6,6 +6,7 @@ import ChartInput from "./chartInput/ChartInput"; // 오른쪽 입력 폼 컴포
 import styles from "./ChartIndex.module.css";
 import { FETAL_STANDARDS } from "./FetalStandardData";
 import { caxios } from "../../config/config";
+import Loading from "common/loading/Loading";
 
 const ChartIndex = () => {
   // 상단 메뉴 버튼: 임산모
@@ -91,9 +92,7 @@ const ChartIndex = () => {
     actualData === null || (isFetalMode && !currentStandardData);
 
   if (currentWeek === 0 || isLoading) {
-    return (
-      <div className={styles.loading}>데이터를 계산하고 로딩 중입니다...</div>
-    );
+    return <Loading message="데이터를 준비하고 있습니다" />;
   }
 
   return (
