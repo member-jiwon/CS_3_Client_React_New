@@ -21,7 +21,7 @@ const DetailChart = ({ menuList, activeMenu, currentWeek, standardData, actualDa
   const finalBabySeq = babyInfo?.babySeq || storedBabySeq;
 
   useEffect(() => {
-    // 🚨 유효성 검사: API 호출 차단 방지 (babySeq와 dueDate 둘 다 필요)
+    //  유효성 검사: API 호출 차단 방지 (babySeq와 dueDate 둘 다 필요)
     if (!finalBabySeq || !dueDate || activeMenu === 0) {
       console.warn("DetailChart: 필수 인자 (babySeq 또는 dueDate) 누락으로 차트 로드 중단.");
       setOption({});

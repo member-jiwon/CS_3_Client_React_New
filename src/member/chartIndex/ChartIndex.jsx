@@ -12,7 +12,12 @@ import { fetalWeekStartEnd, infantWeekStartEnd } from "../utils/pregnancyUtils";
 const ChartIndex = () => {
   const [inputs, setInputs] = useState({});
   const [actualData, setActualData] = useState({}); // 실제 입력 데이터 (API 응답)
-  const measureTypes = {
+  const [currentWeek, setCurrentWeek] = useState(0); // 현재 주차 상태
+  const [activeMenu, setActiveMenu] = useState(0); // 활성 메뉴 인덱스
+  const [isFetalMode, setIsFetalMode] = useState(true); // true: 임산모/태아, false: 육아
+
+
+  const measureTypes = { // const [inputs, setInputs] = useState({});
     EFW: inputs["몸무게"],
     OFD: inputs["머리직경"],
     HC: inputs["머리둘레"],
@@ -20,8 +25,6 @@ const ChartIndex = () => {
     FL: inputs["허벅지 길이"],
   };
 
-
-  // 상단 메뉴 버튼: 임산모
   const fetalMenuList = [
     "성장",
     "몸무게",
@@ -32,14 +35,6 @@ const ChartIndex = () => {
   ];
   // 상단 메뉴 버튼: 육아
   const babyMenuList = ["성장", "몸무게", "키"];
-
-  // true: 임산모/태아, false: 육아
-  const [isFetalMode, setIsFetalMode] = useState(true);
-
-  const [currentWeek, setCurrentWeek] = useState(0); // 현재 주차 상태
-  const [activeMenu, setActiveMenu] = useState(0); // 활성 메뉴 인덱스
-
-
 
   // 현재 모드에 따라 사용될 메뉴 리스트를 동적으로 결정
   const currentMenuList = isFetalMode ? fetalMenuList : babyMenuList;

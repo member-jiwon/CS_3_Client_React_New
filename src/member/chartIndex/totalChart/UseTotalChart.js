@@ -3,22 +3,22 @@ export const UseTotalChart = (currentWeek, standardData, actualData, inputs) => 
         return {};
     }
     const keyMap = {
-      EFW: "몸무게",
-      OFD: "머리직경",
-      HC: "머리둘레",
-      AC: "복부둘레",
-      FL: "허벅지 길이"
+        EFW: "몸무게",
+        OFD: "머리직경",
+        HC: "머리둘레",
+        AC: "복부둘레",
+        FL: "허벅지 길이"
     };
     const safeInputs = inputs && typeof inputs === "object" ? inputs : {};
 
     // 데이터 변환 및 옵션 설정 로직
     const indicators = Object.keys(standardData).map(key => ({
-        
-        name: standardData[key].name, 
-        max: standardData[key].max * 1.05, 
+
+        name: standardData[key].name,
+        max: standardData[key].max * 1.05,
         unit: standardData[key].unit
     }));
-    
+
     const averageValues = Object.keys(standardData).map(key => standardData[key].avg);
 
     const actualValues = Object.keys(standardData).map(key => {
@@ -38,8 +38,8 @@ export const UseTotalChart = (currentWeek, standardData, actualData, inputs) => 
         tooltip: {},
         radar: {
             indicator: indicators,
-            name: { 
-                formatter: (value, indicator) => `${value} (${indicator.unit})`, 
+            name: {
+                formatter: (value, indicator) => `${value} (${indicator.unit})`,
                 textStyle: { color: '#000', backgroundColor: '#f1f1f1', borderRadius: 3, padding: [3, 5] }
             },
             radius: '65%',
@@ -49,7 +49,7 @@ export const UseTotalChart = (currentWeek, standardData, actualData, inputs) => 
             type: 'radar',
             data: [
                 { value: actualValues, name: '내 아기 측정치', symbolSize: 8 },
-          { value: averageValues, name: '표준 평균', symbolSize: 0 }
+                { value: averageValues, name: '표준 평균', symbolSize: 0 }
             ]
         }]
     };

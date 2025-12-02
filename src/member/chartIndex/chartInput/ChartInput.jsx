@@ -26,13 +26,22 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
 
   const handleChange = (key, value) => {
     const type = Object.keys(map).find(t => map[t] === key); // EFW, HC 등
-    const maxForWeek = FETAL_STANDARDS[currentWeek]?.[type]?.max;
-
-    if (maxForWeek && Number(value) > maxForWeek) {
-      alert(`${key}는 최대 ${maxForWeek}${FETAL_STANDARDS[currentWeek][type].unit}를 초과할 수 없습니다.`);
+    const standard = FETAL_STANDARDS[currentWeek]?.[type];
+    if (!standard) {
+      setInputs(prev => ({ ...prev, [key]: value }));
       return;
     }
-    setInputs((prev) => ({ ...prev, [key]: value }));
+    const max = standard.max;
+    const compareValue = type === "EFW" ? Number(value) * 1000 : Number(value);
+    const maxForAlert = type === "EFW" ? max / 1000 : max;
+    const unitForAlert = type === "EFW" ? "kg" : standard.unit;
+
+    if (compareValue > max) {
+      alert(`${key}는 최대 ${maxForAlert}${unitForAlert}를 초과할 수 없습니다.`);
+      return;
+    }
+
+    setInputs(prev => ({ ...prev, [key]: value }));
   };
 
   const REQUIRED_KEYS = [
@@ -80,7 +89,11 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
   }
 
 
-  const handleEdit = () => setIsEditing(true);
+  const handleEdit = () => {
+
+    setDate(actualData.measure_date);
+    setIsEditing(true);
+  };
 
   const handleCancelOrUpdate = async (action) => {
     if (action === "cancel") {
@@ -96,6 +109,11 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
     }
     else if (action === "update") {
       // 수정 완료 → 서버 전송
+      if (!date || date.trim() === "") {
+        alert("날짜를 입력해주세요.");
+        return;
+      }
+
       const invalidInput = REQUIRED_KEYS.some((key) => {
         const value = inputs[key];
         return value === undefined || value === null || value === "" || isNaN(Number(value)) || Number(value) <= 0;
@@ -106,10 +124,14 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
         return;
       }
 
+      console.log("새 날짜 (date):", date);
 
+      console.log("측정 데이터 (measureTypes):", measureTypes); // inputs 기반으로 구성된 객체
+      console.log("-----------------------------------------");
 
-      await updateChartData({ inputs, date, babySeq, id, actualData });
+      await updateChartData({ date, babySeq, id, measureTypes });
       setIsEditing(false);
+
       await fetchActualData();
     }
 
@@ -138,6 +160,7 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
         const formattedDate = new Date(actualData.measure_date)
           .toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
         setDate(formattedDate);
+
       } else {
         setDate(prev => prev || weekStart || "");
       }
@@ -152,7 +175,7 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
       });
       setInputs(updatedInputs);
 
-      setIsEditing(false); // 완료 후 자동으로 수정 버튼 활성화
+      setIsEditing(false); // 완료 후 자동으로 수정 버튼 활성화 
     }
   }, [babyDueDate, currentWeek, actualData]);
 
@@ -268,7 +291,7 @@ const ChartInput = ({ menuList, activeMenu, currentWeek, isFetalMode, inputs, se
         }
         {
           hasData && !isEditing && (
-            <button className={styles.submitBtn} onClick={handleEdit}>
+            <button className={styles.submitBtn} onClick={handleEdit} >
               수정
             </button>
           )
