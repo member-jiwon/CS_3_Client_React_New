@@ -24,3 +24,60 @@
   min-height: 0; /* overflow 방지 */
 }
 
+/* ------------------------ */
+/* 모바일 & 태블릿 반응형 ONLY */
+/* 기본 UI 절대 영향 X */
+
+/* 작은 모바일 (320~375px) */
+@media (max-width: 375px) {
+  .container {
+    flex-direction: column;
+    gap: 12px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .right {
+    gap: 60px; /* 반응형에서만 적용 */
+  }
+}
+
+/* 일반 모바일 (376~480px) */
+@media (min-width: 376px) and (max-width: 480px) {
+  .container {
+    flex-direction: column;
+    gap: 14px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .right {
+    gap: 60px;
+  }
+}
+
+/* 큰 모바일 / 작은 태블릿 (481~767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .container {
+    flex-direction: column;
+    gap: 16px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .right {
+    gap: 60px;
+  }
+}
+
+/* 태블릿 세로 (768~1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .right {
+    gap: 60px;
+  }
+}

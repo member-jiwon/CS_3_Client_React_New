@@ -68,7 +68,7 @@
 .ingbaby {
   width: 20%;
   border: 1px solid #f0d827;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 30px;
   display: flex;
   justify-content: center;
@@ -127,7 +127,7 @@
   width: 20%;
   border: 1px solid #f0d827;
   border-radius: 30px;
-  background-color: white;
+  background-color: #ffffff;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
@@ -179,7 +179,7 @@
   align-items: flex-start;
   width: 580px;
   height: 660px;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 20px;
   position: relative;
 }
@@ -191,7 +191,7 @@
 .modalContenttwo {
   flex: 1;
   height: 100%;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 22px;
   display: flex;
   flex-direction: column;
@@ -264,7 +264,7 @@
   font-weight: bold;
   border: none;
   border-radius: 8px;
-  background-color: white;
+  background-color: #ffffff;
   cursor: pointer;
   z-index: 10;
 }

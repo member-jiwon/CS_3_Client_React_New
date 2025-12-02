@@ -6,7 +6,7 @@ let stompClient = null;
 export const connectWebSocket = (userToken, userId, onMessageReceived) => {
     if (!userToken) return console.error("WebSocket 연결 실패: 토큰 없음");
 
-    const socket = new SockJS(`http://10.10.55.103/ws-stomp?token=${userToken}`);
+    const socket = new SockJS(`http://10.5.5.4/ws-stomp?token=${userToken}`);
 
     stompClient = new Client({
         webSocketFactory: () => socket,

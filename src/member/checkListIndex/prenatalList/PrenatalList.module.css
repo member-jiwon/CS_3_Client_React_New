@@ -402,12 +402,9 @@
   cursor: pointer;
 }
 
-.backBtn:hover {
-  background-color: #f0d827;
-}
-
-.backBtn:active {
-  background-color: #f0d827;
+.backBtn:hover,.backBtn:active {
+  transform: scale(0.98);
+  background-color: #8c8c8c;
 }
 
 .submitBtn {
@@ -423,10 +420,8 @@
   cursor: pointer;
 }
 
-.submitBtn:hover {
-  background-color: #f0d827;
+.submitBtn:hover,.submitBtn:active {
+  transform: scale(0.98);
+  background-color: #e0c817;
 }
 
-.submitBtn:active {
-  background-color: #f0d827;
-}
