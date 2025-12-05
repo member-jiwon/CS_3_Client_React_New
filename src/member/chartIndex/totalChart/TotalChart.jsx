@@ -3,21 +3,22 @@ import styles from "./TotalChart.module.css";
 import { UseTotalChart } from "./UseTotalChart";
 import ReactECharts from "echarts-for-react";
 
-const TotalChart = ({ currentWeek, standardData, actualData, inputs }) => {
-  const option = UseTotalChart(
-    currentWeek,
-    standardData,
-    actualData,
-    inputs || {}
-  );
+
+const TotalChart = ({ currentWeek, standardData, actualData, setActualData, isFetalMode, inputs }) => {
+
+
+
+  const option = UseTotalChart(currentWeek, standardData, actualData, inputs || {}, isFetalMode);
+
+
   const [reset, setReset] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // 반응형을 위한 로직
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     setReset(false);
     const timer = setTimeout(() => setReset(true), 0);
     return () => clearTimeout(timer);
-  }, [actualData, standardData, inputs]);
+  }, [actualData]);
 
   // 반응형 적용 css
   useEffect(() => {
@@ -26,7 +27,7 @@ const TotalChart = ({ currentWeek, standardData, actualData, inputs }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 화면 너비에 따른 폰트/선 굵기 설정
+
   let fontSize = 16;
   let lineWidth = 3;
 

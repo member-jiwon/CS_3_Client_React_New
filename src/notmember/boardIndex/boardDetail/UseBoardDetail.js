@@ -71,6 +71,11 @@ export function UseBoardDetail({ initialComments, handleDeleteBoard, handleEditB
 
         setPostMenuOpen(false); // 메뉴 닫기
     };
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit();
+        }
+    }
     const handleSubmit = async () => { //댓글 작성 완료
         if (!id || id == "anonymousUser") {
             alert("로그인 후 이용 가능한 서비스 입니다");
@@ -157,14 +162,19 @@ export function UseBoardDetail({ initialComments, handleDeleteBoard, handleEditB
     };
     const handleInputChange = (e) => {//댓글 입력창 내용 변경 핸들러
         e.stopPropagation();
-        // 입력값 상태 업데이트 로직 추가
-        setCommentContent(e.target.value);
+        const value = e.target.value;
+
+        if (value.length <= 50) {
+            setCommentContent(value);
+        }
     }
     const reloadComments = async () => {//리로딩 함수
         if (!seq) return;
 
         const resp = await caxios.get("/board/detail", { params: { seq } });
         setTargetBoardFile(resp.data.files);
+        console.log("sdsdfssdfsdfsd",resp.data);
+        console.log("dpdpdd",resp.data.boards);
         setTargetBoard(resp.data.boards);
         setComments(buildCommentTree(resp.data.comments));
 
@@ -234,6 +244,7 @@ export function UseBoardDetail({ initialComments, handleDeleteBoard, handleEditB
         setCommentContent,
         isEdit,
         setIsEdit,
-        setEditCommentId
+        setEditCommentId,
+        handleKeyDown
     };
 }

@@ -8,13 +8,12 @@ import UsePrenatalList from "./UsePrenatalList";
 const CheckItem = ({ check, onToggle }) => {
   // 완료 상태에 따라 다른 CSS 클래스 적용
   const checkCircleClass = check.isDone
-    ? styles.checkDone // 완료된 상태 (색상 채워짐)
-    : styles.checkPending; // 미완료 상태 (테두리만 있음)
+    ? styles.checkDone
+    : styles.checkPending;
 
   return (
     <motion.div
       className={styles.checkItem}
-      // Framer Motion: 항목 로드 시 왼쪽에서 부드럽게 나타나는 애니메이션 효과 적용
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.4 }}
@@ -204,7 +203,7 @@ const PrenatalList = ({ babyData }) => {
                     <input
                       type="date"
                       name="date"
-                      value={data.created_at} 
+                      value={data.created_at}
                       onChange={handelChange}
                       min={
                         checkClicked

@@ -1,71 +1,93 @@
 import { FETAL_STANDARDS } from '../FetalStandardData';
+import { INFANT_STANDARDS } from '../InfantStandardData';
 import { caxios } from '../../../config/config';
-import { calculateFetalWeek } from '../../utils/pregnancyUtils';
+import { calculateFetalWeek, calculateInfantWeek } from '../../utils/pregnancyUtils';
 
-/**
- * 아기 측정 데이터를 가져와서 ECharts 옵션 생성
- */
-export const UseDetailChart = (activeMenu, currentWeek, menuList, standardData, babySeq, dueDate) => {
-    const selectedMetricName = menuList[activeMenu];
-    const metricKeyMap = { "몸무게": "EFW", "머리둘레": "HC", "머리직경": "OFD", "복부둘레": "AC", "허벅지 길이": "FL" };
-    const selectedMetricKey = metricKeyMap[selectedMetricName];
+export const UseDetailChart = (activeMenu, currentWeek, menuList, standardData, babySeq, babyDueDate, isFetalMode) => {
 
-    if (!selectedMetricKey || !FETAL_STANDARDS[currentWeek] || !babySeq || !dueDate) {
-        return Promise.resolve({});
-    }
-    console.log("babySeq : " + babySeq);
+
+
     return caxios.get(`/chart/detail?babySeq=${babySeq}`)
         .then(res => {
+
+            const selectedMetricName = menuList[activeMenu];
+            const metricKeyMap = isFetalMode
+                ? { "몸무게": "EFW", "머리둘레": "HC", "머리직경": "OFD", "복부둘레": "AC", "허벅지 길이": "FL" }
+                : { "몸무게": "BW", "머리둘레": "HC", "신장": "HT" };
+            const selectedMetricKey = metricKeyMap[selectedMetricName];
+
             const records = res.data;
             const actual = {};
-            const metricKeys = ["EFW", "HC", "OFD", "AC", "FL"];
+            const metricKeys = Object.values(metricKeyMap);
 
-            // measure_date -> 주차
+
             records.forEach(r => {
-                const week = calculateFetalWeek(dueDate, r.measure_date);
-                if (!actual[week]) actual[week] = {};
-                metricKeys.forEach(typeKey => {
-                    if (r[typeKey] !== undefined) {
-                        actual[week][typeKey] = r[typeKey]; // Key (EFW) : Value (3.1) 저장
-                    }
+                let idx;
+                if (isFetalMode) {
+                    idx = calculateFetalWeek(babyDueDate, r.measure_date);
+                } else {
+                    idx = Math.ceil(calculateInfantWeek(babyDueDate, r.measure_date) / 4);
+                }
+                if (!actual[idx]) actual[idx] = {};
+                metricKeys.forEach(key => {
+                    if (r[key] !== undefined) actual[idx][key] = r[key];
                 });
-                actual[week][r.measure_type] = r.measure_value;
+                actual[idx][r.measure_type] = r.measure_value;
             });
 
-            const START_WEEK = 14;
-            const END_WEEK = 40;
-            const weeks = [];
+            const START = isFetalMode ? 14 : 1;
+            const END = isFetalMode ? 40 : 25;
+            const xAxis = [];
             const avgData = [];
             const actualBabyData = [];
-            let unit = FETAL_STANDARDS[START_WEEK][selectedMetricKey].unit;
+            let unit = '';
 
-            for (let week = START_WEEK; week <= END_WEEK; week++) {
-                weeks.push(week);
-                avgData.push(FETAL_STANDARDS[week][selectedMetricKey]?.avg ?? null);
-                actualBabyData.push(actual[week]?.[selectedMetricKey] ?? null);
+            for (let i = START; i <= END; i++) {
+                xAxis.push(i);
+                actualBabyData.push(actual[i]?.[selectedMetricKey] ?? null);
+
+                if (isFetalMode) {
+                    avgData.push(FETAL_STANDARDS[i]?.[selectedMetricKey]?.avg ?? null);
+                    unit = FETAL_STANDARDS[i]?.[selectedMetricKey]?.unit ?? '';
+                } else {
+                    avgData.push(INFANT_STANDARDS[i]?.[selectedMetricKey]?.avg ?? null);
+                    unit = INFANT_STANDARDS[i]?.[selectedMetricKey]?.unit ?? '';
+                }
+            }
+
+            const series = [
+                { name: '표준 평균', type: 'line', data: avgData, lineStyle: { color: 'green', width: 2 }, smooth: true, showSymbol: false }
+            ];
+
+            if (actualBabyData.some(v => v !== null)) {
+                series.push({
+                    name: '내 아기 성장 기록',
+                    type: 'line',
+                    data: actualBabyData,
+                    lineStyle: { color: 'blue', width: 3 },
+                    symbolSize: 8,
+                    connectNulls: true
+                });
             }
 
             return {
-                title: { text: `${selectedMetricName} 성장 추이 (${START_WEEK}주~${END_WEEK}주)`, left: 'center' },
+                title: { text: `${selectedMetricName} 성장 추이`, left: 'center' },
                 tooltip: {
                     trigger: 'axis',
                     formatter: (params) => {
-                        const week = params[0].name;
-                        const values = params.map(p => `${p.marker} ${p.seriesName}: ${p.value} ${unit}`);
-                        return `주차: ${week}주<br/>` + values.join('<br/>');
+                        const idx = params[0].name;
+                        const values = params.map(p => `${p.marker} ${p.seriesName}: ${p.value ?? '-'} ${unit}`);
+                        return `${isFetalMode ? '주차' : '개월'}: ${idx}<br/>` + values.join('<br/>');
                     }
                 },
-                legend: { data: ['태아 표준 기록 (평균)', '내 아기 성장 기록'], bottom: 0 },
-                xAxis: { type: 'category', data: weeks, name: '임신 주수 (Week)', boundaryGap: false },
+                legend: { data: series.map(s => s.name), bottom: 0 },
+                xAxis: { type: 'category', data: xAxis, boundaryGap: false },
                 yAxis: { type: 'value', name: `측정값 (${unit})` },
-                series: [
-                    { name: '태아 표준 기록 (평균)', type: 'line', data: avgData, lineStyle: { color: 'green', width: 2 }, smooth: true, showSymbol: false },
-                    { name: '내 아기 성장 기록', type: 'line', data: actualBabyData, lineStyle: { color: 'blue', width: 3 }, symbolSize: 8, connectNulls: true }
-                ]
+                series
             };
         })
         .catch(err => {
-            console.error("그래프 데이터 로딩 실패:", err);
+            console.error("UseDetailChart 로딩 실패:", err);
             return {};
         });
 };

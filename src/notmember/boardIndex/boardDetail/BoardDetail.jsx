@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./BoardDetail.module.css";
+import { motion, AnimatePresence } from "framer-motion";
 import { MoreHorizontal, MessageCircle, Send } from "lucide-react";
 import Comment from "./comment/Comment";
 import { UseBoardDetail } from "./UseBoardDetail";
@@ -7,11 +8,11 @@ import { EditorContent } from "@tiptap/react";
 import CommentItem from "./comment/Comment";
 import { FILE_SERVER } from "config/config";
 import BoardOver from "../boardOver/BoardOver";
+import useAuthStore from "store/useStore";
 
 // --- 메인 컴포넌트 ---
 const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
   // --- 댓글 데이터 ---
-
   const {
     setIsMine,
     comments,
@@ -40,10 +41,12 @@ const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
     isEdit,
     setIsEdit,
     setEditCommentId,
+    handleKeyDown
   } = UseBoardDetail({ handleDeleteBoard, handleEditBoard });
 
   const [reportOpen, setReportOpen] = useState(false);
   const [reportTargetSeq, setReportTargetSeq] = useState(null);
+  const isLogin = useAuthStore(state => state.isLogin);
 
   // 상태에 따라 동적 클래스 생성 - css를 위해 추가한 사항 확인
   const commentAreaClasses = [
@@ -53,7 +56,13 @@ const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
   ].join(" "); // 클래스 문자열 결합
 
   return (
-    <div className={styles.parent} onClick={clearReplyMode}>
+    <motion.div
+      className={styles.parent}
+      onClick={clearReplyMode}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+    >
       {/* 상단 뒤로가기 버튼 영역 */}
       <div className={styles.topBar}>
         <div className={styles.backButtonWrapper}>
@@ -80,57 +89,68 @@ const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
                   color="#696b70"
                   onClick={handlePostMenuToggle}
                 />
-                {postMenuOpen && (
-                  <div className={styles.dropdownMenu} ref={menuRef}>
-                    {isMine ? (
-                      // 내가 작성한 글
-                      <>
+
+                <AnimatePresence>
+                  {postMenuOpen && (
+                    <motion.div
+                      className={styles.dropdownMenu}
+                      ref={menuRef}
+                      initial={{ opacity: 0, scale: 0.9, y: -5 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, y: -5 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      {isMine ? (
+                        // 내가 작성한 글
+                        <>
+                          <button
+                            className={styles.menuItem}
+                            onClick={(e) =>
+                              handlePostMenuItemClick(
+                                e,
+                                "수정",
+                                targetBoard.board_seq
+                              )
+                            }
+                          >
+                            수정
+                          </button>
+                          <button
+                            className={styles.menuItem}
+                            onClick={(e) =>
+                              handlePostMenuItemClick(
+                                e,
+                                "삭제",
+                                targetBoard.board_seq
+                              )
+                            }
+                          >
+                            삭제
+                          </button>
+                        </>
+                      ) : (
+                        // 남이 작성한 글
                         <button
                           className={styles.menuItem}
-                          onClick={(e) =>
+                          onClick={(e) => {
                             handlePostMenuItemClick(
                               e,
-                              "수정",
+                              "신고",
                               targetBoard.board_seq
-                            )
-                          }
+                            );
+                            setReportOpen(true);
+                            setReportTargetSeq(targetBoard.board_seq);
+                          }}
                         >
-                          수정
+                          신고
                         </button>
-                        <button
-                          className={styles.menuItem}
-                          onClick={(e) =>
-                            handlePostMenuItemClick(
-                              e,
-                              "삭제",
-                              targetBoard.board_seq
-                            )
-                          }
-                        >
-                          삭제
-                        </button>
-                      </>
-                    ) : (
-                      // 남이 작성한 글
-                      <button
-                        className={styles.menuItem}
-                        onClick={(e) => {
-                          handlePostMenuItemClick(
-                            e,
-                            "신고",
-                            targetBoard.board_seq
-                          );
-                          setReportOpen(true);
-                          setReportTargetSeq(targetBoard.board_seq);
-                        }}
-                      >
-                        신고
-                      </button>
-                    )}
-                  </div>
-                )}
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
+
             <div className={styles.authorNicknameWrapper}>
               <div className={styles.userNickname}>{targetBoard.nickname}</div>
             </div>
@@ -170,24 +190,34 @@ const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
             <div className={styles.commentList}>
               {/* 배열 데이터를 맵핑하여 댓글 렌더링 */}
               {comments && comments.length > 0 ? (
-                comments.map((comment) => (
-                  <CommentItem
-                    key={comment.comment_seq}
-                    comment={comment}
-                    commentMenuOpenId={commentMenuOpenId}
-                    setCommentMenuOpenId={setCommentMenuOpenId}
-                    menuRef={menuRef}
-                    closePostMenu={() => setPostMenuOpen(false)}
-                    setPostMenuOpen={setPostMenuOpen}
-                    setIsReply={setIsReply}
-                    setParentCommentId={setParentCommentId}
-                    reloadComments={reloadComments}
-                    commentContent={commentContent}
-                    setIsEdit={setIsEdit}
-                    setEditCommentId={setEditCommentId}
-                    setCommentContent={setCommentContent}
-                  />
-                ))
+                <AnimatePresence>
+                  {comments.map((comment, index) => (
+                    <motion.div
+                      key={comment.comment_seq}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ delay: index * 0.04 }}
+                    >
+                      <CommentItem
+                        key={comment.comment_seq}
+                        comment={comment}
+                        commentMenuOpenId={commentMenuOpenId}
+                        setCommentMenuOpenId={setCommentMenuOpenId}
+                        menuRef={menuRef}
+                        closePostMenu={() => setPostMenuOpen(false)}
+                        setPostMenuOpen={setPostMenuOpen}
+                        setIsReply={setIsReply}
+                        setParentCommentId={setParentCommentId}
+                        reloadComments={reloadComments}
+                        commentContent={commentContent}
+                        setIsEdit={setIsEdit}
+                        setEditCommentId={setEditCommentId}
+                        setCommentContent={setCommentContent}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               ) : (
                 <div
                   className={styles.emptyComments}
@@ -215,13 +245,14 @@ const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
                   onClick={(e) => e.stopPropagation()}
                   value={commentContent}
                   onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
                   type="text"
                   placeholder={
                     isEdit
-                      ? "댓글을 수정하세요"
+                      ? "댓글을 수정하세요 (최대 50자)"
                       : isReply
-                      ? "대댓글을 입력하세요"
-                      : "메시지를 입력하세요"
+                        ? "대댓글을 입력하세요 (최대 50자)"
+                        : "메시지를 입력하세요 (최대 50자)"
                   }
                   className={styles.inputElement}
                 />
@@ -239,7 +270,7 @@ const BoardDetail = ({ handleDeleteBoard, handleEditBoard }) => {
         onClose={() => setReportOpen(false)}
         boardSeq={reportTargetSeq}
       />
-    </div>
+    </motion.div>
   );
 };
 
