@@ -81,11 +81,26 @@ const Counseling = ({ onClose }) => {
     }
   }, [messages, isLoading]);
 
+  // handleClose 함수: 모달 상태를 즉시 false로 바꿔서 모달 닫기
+ const [isClosed, setIsClosed] = useState(false);
+
+const handleClose = () => {
+  setIsClosed(true); // 모달 닫힘 상태 표시
+  setInputText("");
+  setMessages([]);
+  setInputDisabled(true);
+  setIsLoading(false);
+  onClose(); // 부모 상태 false
+};
+
+// sendMessage 함수 안에서
+if (isClosed) return; // 모달이 닫히면 더 이상 상태 업데이트 하지 않음
+
   // Portal로 body 최상위에 렌더링
   return ReactDOM.createPortal(
     <div className={styles.container} style={{ zIndex: 10000, position: "fixed", top: 0, left: 0, width: "100%", height: "100%" }}>
       {/* 왼쪽 클릭 시 모달 닫기 */}
-      <div className={styles.left} onClick={onClose}></div>
+      <div className={styles.left} onClick={handleClose}></div>
 
       {/* 오른쪽 채팅창 */}
       <div className={styles.right} onClick={(e) => e.stopPropagation()}>
@@ -93,7 +108,7 @@ const Counseling = ({ onClose }) => {
         <div className={styles.up}>
           <div className={styles.oneonenine}>긴급 상담</div>
           {/* 오른쪽 X 버튼 */}
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <button className={styles.closeBtn} onClick={handleClose}>✕</button>
         </div>
 
         {/* 채팅 메시지 영역 */}

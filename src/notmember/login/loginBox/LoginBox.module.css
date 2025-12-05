@@ -56,7 +56,7 @@
 }
 
 .loginmiddle label {
-    font-size: 18px;
+    font-size: 16px;
     color: #8C8C8C;
     margin-left: 10px;
     display: block;
@@ -69,7 +69,7 @@
     height:48px;
     padding-left: 10px;
     border-radius: 20px;
-    border:1px solid #8C8C8C;
+    border:1px solid var(--color-font-back);
     outline: none;
 }
 
@@ -97,11 +97,11 @@
     background-color: #F0D827;
     color:#ffffff;
     font-size: 18px;
-    font-weight: bold;
     cursor: pointer;
 }
 
 .logbut:hover {
+    font-weight: bold;
     transform: scale(0.98);
     background-color: #e0c817;
 }
@@ -145,7 +145,7 @@
 .changelog + .changepw::before {
   content: "|";
   margin: 0 8px;
-  color: #999;
+  color: #8c8c8c;
 }
 
 .alert input{
