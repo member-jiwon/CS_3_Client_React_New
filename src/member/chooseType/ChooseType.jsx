@@ -17,7 +17,6 @@ const ChooseType = () => {
   const [hover, setHover] = useState(false);
   const [hoverTwo, setHoverTwo] = useState(false);
 
-  // 모달 닫기 및 상태 초기화 함수
   const closeModal = () => {
     setShowInputBaby(false);
     setBabyType("");
@@ -40,11 +39,7 @@ const ChooseType = () => {
     >
       {!showInputBaby && (
         <>
-          <div
-            className={`${styles.babymomcheckbox} ${
-              hover ? styles.hoverBorder : ""
-            }`}
-          >
+          <div className={`${styles.babymomcheckbox} ${hover ? styles.hoverBorder : ""}`}>
             <div className={styles.cute}>
               <h1 className={hover ? styles.hoverTitle : ""}>임산부</h1>
               <p>아직 뱃속에 있어요</p>
@@ -63,12 +58,7 @@ const ChooseType = () => {
             </div>
           </div>
 
-          {/* 육아 선택 박스 */}
-          <div
-            className={`${styles.babycheckbox} ${
-              hoverTwo ? styles.hoverBorder : ""
-            }`}
-          >
+          <div className={`${styles.babycheckbox} ${hoverTwo ? styles.hoverBorder : ""}`}>
             <div className={styles.cutetwo}>
               <h1 className={hoverTwo ? styles.hoverTitleTwo : ""}>육아</h1>
               <p>태어났어요</p>
@@ -94,7 +84,11 @@ const ChooseType = () => {
       )}
 
       {showInputBaby && (
-        <InputBaby type={babyType} onClose={closeModal} fromChooseType={true} />
+        <InputBaby
+          type={babyType}
+          onClose={closeModal}
+          fromChooseType={true}
+        />
       )}
     </div>
   );

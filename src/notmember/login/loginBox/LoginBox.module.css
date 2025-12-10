@@ -29,16 +29,13 @@
 }
 
 .logininbox {
-  /* border: 1px solid black; */
   width: 80%;
   height: auto;
 }
-/* -------------------------------------------------- */
-/* 로그인 제목 */
+
 .logintop {
   display: flex;
   justify-content: center;
-  /* border:1px solid black; */
 }
 
 .toptitle {
@@ -46,11 +43,9 @@
   font-weight: bold;
   color: #696b70;
 }
-/* -------------------------------------------------- */
-/* 아이디 비밀번호 입력칸 */
+
 .loginmiddle {
   margin-top: 40px;
-  /* border:1px solid black; */
 }
 
 .loginmiddle label {
@@ -79,15 +74,11 @@
 .middletwo {
   margin-top: 24px;
 }
-/* -------------------------------------------------- */
-/*로그인 버튼 부분*/
 
 .loginbottom {
   margin-top: 48px;
   display: flex;
   gap: 16px;
-
-  /* border:1px solid black; */
 }
 
 .back {
@@ -96,7 +87,6 @@
   border-radius: 20px;
   border: none;
   font-size: 18px;
-  font-weight: bold;
   color: #ffffff;
   background-color: #d9d9d9;
   cursor: pointer;
@@ -105,6 +95,7 @@
 .back:hover {
   transform: scale(0.98);
   background-color: #b0b0b0;
+  font-weight: bold;
 }
 
 .logbut {
@@ -115,20 +106,18 @@
   background-color: #f0d827;
   color: #ffffff;
   font-size: 18px;
-  font-weight: bold;
   cursor: pointer;
 }
 
 .logbut:hover {
   transform: scale(0.98);
   background-color: #e0c817;
+  font-weight: bold;
 }
 
 .logbut:active {
   transform: scale(0.98);
 }
-/* -------------------------------------------------- */
-/*버튼 아래 나머지*/
 
 .signup {
   margin-top: 24px;
@@ -152,14 +141,14 @@
   margin-left: 10px;
   text-decoration: none;
   color: #8c8c8c;
-  display: inline-block; /* 또는 block */
+  display: inline-block; 
   font-size: px;
 }
 
 .changepw {
   text-decoration: none;
   color: #8c8c8c;
-  display: inline-block; /* 또는 block */
+  display: inline-block;
 }
 .changelog + .changepw::before {
   content: "|";
@@ -184,9 +173,6 @@
   box-shadow: 0 0 0 4px rgba(255, 122, 122, 0.35);
 }
 
-/*반응형*/
-
-/* ------------------ 반응형 ------------------ */
 @media screen and (max-width: 768px) {
   .loginbox {
     width: 90%;
@@ -207,7 +193,8 @@
     font-size: 14px;
   }
 
-  .logbut {
+  .logbut,
+  .back {
     height: 44px;
     font-size: 16px;
   }
@@ -237,7 +224,8 @@
     font-size: 14px;
   }
 
-  .logbut {
+  .logbut,
+  .back {
     height: 40px;
     font-size: 14px;
   }
