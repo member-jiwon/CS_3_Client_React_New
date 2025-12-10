@@ -32,17 +32,17 @@ const ChartInput = ({
 
   const map = isFetalMode
     ? {
-        EFW: "몸무게",
-        OFD: "머리직경",
-        HC: "머리둘레",
-        AC: "복부둘레",
-        FL: "허벅지 길이",
-      }
+      EFW: "몸무게",
+      OFD: "머리직경",
+      HC: "머리둘레",
+      AC: "복부둘레",
+      FL: "허벅지 길이",
+    }
     : {
-        BW: "몸무게",
-        HC: "머리둘레",
-        HT: "신장",
-      };
+      BW: "몸무게",
+      HC: "머리둘레",
+      HT: "신장",
+    };
 
   const handleChange = (key, value) => {
     const type = Object.keys(map).find((t) => map[t] === key); // EFW, HC 등
@@ -106,8 +106,8 @@ const ChartInput = ({
     if (invalidInput) {
       alert(
         "모든 필수 항목(" +
-          REQUIRED_KEYS.join(", ") +
-          ")을 올바르게 입력해주세요."
+        REQUIRED_KEYS.join(", ") +
+        ")을 올바르게 입력해주세요."
       );
       return;
     }
@@ -194,12 +194,26 @@ const ChartInput = ({
       }
     };
 
-    window.addEventListener("keydown", handleGlobalKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleGlobalKeyDown);
-    };
   }, [hasData, isEditing, inputs, date]);
+
+  const handleInputKeyDown = (e) => {
+    if (e.isComposing) return;
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      if (!hasData) {
+        handleSubmit();
+      } else if (hasData && isEditing) {
+        handleCancelOrUpdate("update");
+      }
+      
+    }
+  };
+
+
+
 
   useEffect(() => {
     if (!babyDueDate || babyDueDate === 0) {
@@ -259,6 +273,7 @@ const ChartInput = ({
           max={weekEnd ?? undefined}
           disabled={isDisabled}
           onChange={(e) => setDate(e.target.value)}
+          onKeyDown={handleInputKeyDown}
         />
 
         {activeItem === "성장" && (
@@ -275,6 +290,7 @@ const ChartInput = ({
                       disabled={isDisabled}
                       onChange={(e) => handleChange(item, e.target.value)}
                       placeholder={item}
+                      onKeyDown={handleInputKeyDown}
                     />
                     <span className={styles.unit}>kg</span>
                   </div>
@@ -287,6 +303,7 @@ const ChartInput = ({
                       disabled={isDisabled}
                       onChange={(e) => handleChange(item, e.target.value)}
                       placeholder={item}
+                      onKeyDown={handleInputKeyDown}
                     />
                     <span className={styles.unit}>
                       {isFetalMode ? "mm" : "cm"}
@@ -310,6 +327,7 @@ const ChartInput = ({
                   disabled={isDisabled}
                   onChange={(e) => handleChange(activeItem, e.target.value)}
                   placeholder={activeItem}
+                  onKeyDown={handleInputKeyDown}
                 />
                 <span className={styles.unit}>kg</span>
               </div>
@@ -322,6 +340,7 @@ const ChartInput = ({
                   disabled={isDisabled}
                   onChange={(e) => handleChange(activeItem, e.target.value)}
                   placeholder={activeItem}
+                  onKeyDown={handleInputKeyDown}
                 />
                 <span className={styles.unit}>{isFetalMode ? "mm" : "cm"}</span>
               </div>

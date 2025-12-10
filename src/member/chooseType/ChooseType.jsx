@@ -45,7 +45,7 @@ const ChooseType = () => {
           {/* 임산모 선택 박스 */}
           <div className={`${styles.babymomcheckbox} ${hover ? styles.hoverBorder : ""}`}>
             <div className={styles.cute}>
-              <h1 className={hover ? styles.hoverTitle : ""}>임산모</h1>
+              <h1 className={hover ? styles.hoverTitle : ""}>임산부</h1>
               <p>아직 뱃속에 있어요</p>
               <img src={babyImg} alt="baby" className={styles.babyImage} />
               <button
