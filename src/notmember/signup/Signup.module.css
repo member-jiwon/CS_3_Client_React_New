@@ -1,6 +1,3 @@
-/*-----------------------------------------------------------*/
-/* 기본 회원가입 UI */
-/* 기본 데스크탑 - 중앙 정렬 */
 .membershipbox {
     width: 580px;
     max-height: 900px;
@@ -10,7 +7,7 @@
     box-shadow: 4px 4px 8px -2px rgba(0, 0, 0, 0.25);
     display: flex;
     justify-content: center;
-    align-items: center; /* 데스크탑 중앙 */
+    align-items: center;
     padding: 10px;
     box-sizing: border-box;
     overflow-y: auto;
@@ -24,11 +21,10 @@
     gap: 16px;
 }
 
-/* 회원가입 제목 */
 .newusertitle {
     font-size: 32px;
     font-weight: bold;
-    color: #696B70;
+    color: #696b70;
     display: flex;
     justify-content: center;
 }
@@ -39,22 +35,19 @@
     background-color: #FFF4D6;
     display: flex;
     justify-content: center;
-    /* align-items 제거 또는 flex-start로 변경 */
-    align-items: flex-start; /* 상단 정렬 */
-    padding: 20px 0; /* 상하 여백 */
+    align-items: flex-start;
+    padding: 20px 0;
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
 }
 
-/*-----------------------------------------------------------*/
-/* 이메일 */
 .newemail {
     margin-top: 30px;
 }
 
 .newemail label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -66,14 +59,14 @@
     width: 300px;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .newemail input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
@@ -88,25 +81,24 @@
     height: 40px;
     border-radius: 20px;
     border: none;
-    background-color: #B9B9B9;
+    background-color: #d9d9d9;
     color: white;
     font-size: 16px;
-    font-weight: bold;
     cursor: pointer;
 }
 
 .emailauth:hover {
     transform: scale(0.98);
     background-color: #F0D827;
+    font-weight: bold;
 }
 
 .emailauth:active {
     transform: scale(0.98);
 }
 
-/* 이메일 확인 */
 .emailing label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -118,20 +110,19 @@
     width: 100%;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .emailing input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
-/* 아이디 */
 .newid label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -143,14 +134,14 @@
     width: 300px;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .newid input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
@@ -159,25 +150,24 @@
     height: 40px;
     border-radius: 20px;
     border: none;
-    background-color: #B9B9B9;
+    background-color: #d9d9d9;
     color: white;
     font-size: 16px;
-    font-weight: bold;
     cursor: pointer;
 }
 
 .idauth:hover {
     transform: scale(0.98);
     background-color: #F0D827;
+    font-weight: bold;
 }
 
 .idauth:active {
     transform: scale(0.98);
 }
 
-/* 닉네임 */
 .newnic label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -189,14 +179,14 @@
     width: 300px;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .newnic input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
@@ -205,15 +195,15 @@
     height: 40px;
     border-radius: 20px;
     border: none;
-    background-color: #B9B9B9;
+    background-color: #d9d9d9;
     color: white;
     font-size: 16px;
-    font-weight: bold;
     cursor: pointer;
 }
 
 .nicauth:hover {
     transform: scale(0.98);
+    font-weight: bold;
     background-color: #F0D827;
 }
 
@@ -221,9 +211,8 @@
     transform: scale(0.98);
 }
 
-/* 비밀번호 */
 .pwing label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -235,20 +224,19 @@
     width: 100%;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .pwing input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
-/* 연락처 */
 .phone label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -267,7 +255,7 @@
     text-align: center;
     font-size: 16px;
     font-weight: 400;
-    color: #8C8C8C;
+    color: #8c8c8c;
     flex-shrink: 0;
 }
 
@@ -275,7 +263,7 @@
     width: 20px;
     text-align: center;
     font-weight: 400;
-    color: #8C8C8C;
+    color: #8c8c8c;
     flex-shrink: 0;
 }
 
@@ -284,20 +272,19 @@
     min-width: 0;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .phoneWrapper input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
-/* 생년월일 */
 .birthing label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -309,20 +296,19 @@
     width: 100%;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .birthing input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
-/* 가족코드 */
 .familying label {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -334,18 +320,17 @@
     width: 100%;
     height: 40px;
     border-radius: 20px;
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--color-font-back);
     padding: 0 12px;
     box-sizing: border-box;
     outline: none;
 }
 
 .familying input::placeholder {
-    color: #8C8C8C;
+    color: #8c8c8c;
     font-size: 16px;
 }
 
-/* 체크박스 */
 .okcheck {
     display: flex;
     align-items: center;
@@ -355,7 +340,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #8C8C8C;
+    color: #8c8c8c;
     cursor: pointer;
 }
 
@@ -369,14 +354,26 @@
     cursor: pointer;
     margin: 0;
     position: relative;
+    background-color: white;
 }
 
 .checkboxLabel input[type="checkbox"]:checked {
-    background-color: #499ef8;
-    border-color: #499ef8;
+    background-color: #f0d827;
+    border: none;
 }
 
-/* 가족코드 + 부모 선택 */
+.checkboxLabel input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .checkAndParent {
     display: flex;
     gap: 20px;
@@ -399,13 +396,36 @@
     align-items: center;
     font-size: 16px;
     font-weight: bold;
-    color: #8C8C8C;
+    color: #8c8c8c;
 }
 
 .papa {
+    appearance: none;
+    -webkit-appearance: none;
     width: 20px;
     height: 20px;
     margin-right: 5px;
+    border-radius: 50%;
+    border: 1px solid var(--color-font-back);
+    position: relative;
+    cursor: pointer;
+}
+
+.papa:checked {
+    border: none;
+    background-color: #f0d827;
+}
+
+.papa:checked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .familying {
@@ -419,13 +439,12 @@
 .me {
     font-size: 16px;
     font-weight: bold;
-    color: #8C8C8C;
+    color: #8c8c8c;
 }
 
-/* 버튼 */
 .buttonGroup {
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     gap: 25px;
 }
 
@@ -435,10 +454,9 @@
     padding: 0 24px;
     border-radius: 20px;
     font-size: 18px;
-    font-weight: 700;
     border: none;
     color: white;
-    background-color: #B9B9B9;
+    background-color: #d9d9d9;
     cursor: pointer;
 }
 
@@ -448,21 +466,23 @@
     padding: 0 24px;
     border-radius: 20px;
     font-size: 18px;
-    font-weight: 700;
     border: none;
     background-color: #F0D827;
     color: white;
     cursor: pointer;
 }
 
-.signinbutton:hover, .signinbutton:active {
+.signinbutton:hover,
+.signinbutton:active {
     transform: scale(0.98);
     background-color: #e0c817;
+    font-weight: bold;
 }
 
 .backbutton:hover {
     transform: scale(0.98);
-    background-color: #b0b0b0;;
+    background-color: #b0b0b0;
+    font-weight: bold;
 }
 
 .backbutton:active {
@@ -470,22 +490,30 @@
 }
 
 .borderRegex {
-    border: solid 1px #499ef8 !important;
+    border: 1px solid #ff7a7a !important;
+    background-color: #fff;
+    padding: 8px 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+
+    transition: all 0.2s ease;
+}
+
+.borderRegex:focus,
+.borderRegex:focus-within {
+    outline: none;
+
+    border-color: #ff7a7a;
+    box-shadow: 0 0 0 4px rgba(255, 122, 122, 0.35);
 }
 
 .noCode {
     background-color: #e0e0e0ab;
 }
 
-/*-----------------------------------------------------------*/
-/* ============================= */
-/* 📱 모바일 - 480px 이하 */
-/* ============================= */
-/* 모바일 */
 @media (max-width: 480px) {
     .phoneWrapper {
-        flex-direction: row; /* 가로 유지 */
-        gap: 5px; /* 간격 조금 줄임 */
+        flex-direction: row;
+        gap: 5px;
     }
 
     .prefix {
@@ -506,18 +534,12 @@
     }
 }
 
-
-
-/* ============================= */
-/* 📲 태블릿 - 481px~768px */
-/* ============================= */
-/* 모바일 - 화면보다 길면 상단 정렬 */
 @media (max-width: 768px) {
     .membershipbox {
         width: 90%;
-        max-height: 100vh; /* 화면 대비 최대 높이 */
+        max-height: 100vh;
         height: auto;
-        align-items: flex-start; /* 모바일 상단 정렬 */
+        align-items: flex-start;
         padding: 20px;
     }
 }
@@ -529,22 +551,18 @@
     }
 }
 
-/* ============================= */
-/* Nest Hub (약 1024px 이하) */
-/* ============================= */
 @media (max-width: 1024px) and (min-width: 769px) {
     .membershipbox {
-        width: 80%;           /* 화면 비율에 맞춤 */
-        max-height: 80vh;     /* 화면 대비 최대 높이 */
+        width: 80%;
+        max-height: 80vh;
         padding: 15px;
         align-items: flex-start;
     }
 
     .mbsinbox {
-        gap: 12px;            /* 조금 좁게 */
+        gap: 12px;
     }
 
-    /* 버튼, input 비율 맞추기 */
     .emailauth,
     .idauth,
     .nicauth,
@@ -573,9 +591,9 @@
     .membershipbox {
         width: 500px;
         max-height: 85vh;
-        height: auto;             /* 내용에 맞게 */
+        height: auto;
         padding: 20px;
-        align-items: flex-start;  /* 상단 정렬 */
-        overflow-y: auto;         /* 내용 넘치면 스크롤 */
+        align-items: flex-start;
+        overflow-y: auto;
     }
 }

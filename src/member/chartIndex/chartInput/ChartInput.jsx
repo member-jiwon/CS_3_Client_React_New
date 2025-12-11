@@ -45,7 +45,7 @@ const ChartInput = ({
     };
 
   const handleChange = (key, value) => {
-    const type = Object.keys(map).find((t) => map[t] === key); // EFW, HC 등
+    const type = Object.keys(map).find((t) => map[t] === key);
     const standard = isFetalMode
       ? FETAL_STANDARDS[currentWeek]?.[type]
       : INFANT_STANDARDS[Math.ceil(currentWeek / 4)]?.[type];
@@ -81,7 +81,6 @@ const ChartInput = ({
   };
 
   const handleSubmit = async () => {
-    //날짜 검사
     if (!date || date.trim() === "") {
       alert("날짜를 입력해주세요.");
       return;
